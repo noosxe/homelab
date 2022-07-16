@@ -1,0 +1,54 @@
+---
+  - name: Download ubuntu cloudimg
+    ansible.builtin.get_url:
+      url: "{{cloudimg_url}}"
+      dest: "{{cloudimg_file}}"
+
+  - name: Install proxmoxer
+    ansible.builtin.pip:
+      name: proxmoxer
+
+  - name: Create temp vm
+    proxmox_kvm:
+      api_user: root@pam
+      api_password: "{{ PV_password }}"
+      api_host: pve
+      name: ubuntu-cloud-test
+      node: pve
+      cores: 2
+      memory: 2048
+      vmid: "{{cloudimg_vmid}}"
+    register: template_vm_result
+
+  - name: Import ubuntu cloud image
+    become: true
+    become_method: su
+    ansible.builtin.raw: /usr/sbin/qm importdisk {{cloudimg_vmid}} {{cloudimg_file}} local-lvm
+    when: template_vm_result.changed
+
+  - name: Setup ubuntu cloud template
+    become: true
+    become_method: su
+    ansible.builtin.command:
+      argv:
+        - /usr/sbin/qm
+        - set
+        - "{{cloudimg_vmid}}"
+        - --scsihw=virtio-scsi-pci
+        - --scsi0=local-lvm:vm-{{cloudimg_vmid}}-disk-0
+        - --ide2=local-lvm:cloudinit
+        - --boot=c
+        - --bootdisk=scsi0
+        - --serial0=socket
+        - --vga=serial0
+    when: template_vm_result.changed
+
+  - name: Convert to template
+    become: true
+    become_method: su
+    ansible.builtin.command:
+      argv:
+        - /usr/sbin/qm
+        - template
+        - "{{cloudimg_vmid}}"
+    when: template_vm_result.changed

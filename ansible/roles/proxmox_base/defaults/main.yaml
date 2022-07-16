@@ -1,0 +1,4 @@
+---
+cloudimg_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+cloudimg_file: /home/noosxe/cloudimg.img
+cloudimg_vmid: 9000
