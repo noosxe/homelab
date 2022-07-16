@@ -1,7 +1,7 @@
 - name: Proxmox base
   hosts: proxmox
   vars_prompt:
-  - name: PV_password
+  - name: pv_password
     prompt: "Node Password"
     private: true
   roles:

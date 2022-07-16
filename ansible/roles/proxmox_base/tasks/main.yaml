@@ -1,29 +1,29 @@
 ---
   - name: Download ubuntu cloudimg
     ansible.builtin.get_url:
-      url: "{{cloudimg_url}}"
-      dest: "{{cloudimg_file}}"
+      url: "{{ cloudimg_url }}"
+      dest: "{{ cloudimg_file }}"
 
   - name: Install proxmoxer
     ansible.builtin.pip:
       name: proxmoxer
 
-  - name: Create temp vm
+  - name: Create cloud vm template
     proxmox_kvm:
-      api_user: root@pam
-      api_password: "{{ PV_password }}"
-      api_host: pve
-      name: ubuntu-cloud-test
-      node: pve
-      cores: 2
-      memory: 2048
-      vmid: "{{cloudimg_vmid}}"
+      api_user: "{{ pv_user }}"
+      api_password: "{{ pv_password }}"
+      api_host: "{{ pv_host }}"
+      name: "{{ cvm.name }}"
+      node: "{{ pv_host }}"
+      cores: "{{ cvm.cores }}"
+      memory: "{{ cvm.memory }}"
+      vmid: "{{ cvm.id }}"
     register: template_vm_result
 
   - name: Import ubuntu cloud image
     become: true
     become_method: su
-    ansible.builtin.raw: /usr/sbin/qm importdisk {{cloudimg_vmid}} {{cloudimg_file}} local-lvm
+    ansible.builtin.command: /usr/sbin/qm importdisk {{ cvm.id }} {{ cloudimg_file }} local-lvm
     when: template_vm_result.changed
 
   - name: Setup ubuntu cloud template
@@ -33,9 +33,9 @@
       argv:
         - /usr/sbin/qm
         - set
-        - "{{cloudimg_vmid}}"
+        - "{{ cvm.id }}"
         - --scsihw=virtio-scsi-pci
-        - --scsi0=local-lvm:vm-{{cloudimg_vmid}}-disk-0
+        - --scsi0=local-lvm:vm-{{ cvm.id }}-disk-0
         - --ide2=local-lvm:cloudinit
         - --boot=c
         - --bootdisk=scsi0
@@ -50,5 +50,18 @@
       argv:
         - /usr/sbin/qm
         - template
-        - "{{cloudimg_vmid}}"
+        - "{{ cvm.id }}"
     when: template_vm_result.changed
+
+  - name: Clone the template
+    community.general.proxmox_kvm:
+      api_user: "{{ pv_user }}"
+      api_password: "{{ pv_password }}"
+      api_host: "{{ pv_host }}"
+      node: "{{ pv_host }}"
+      clone: "{{ cvm.name }}"
+      vmid: "{{ cvm.id }}"
+      newid: "{{ item.id }}"
+      name: "{{ item.name }}"
+      timeout: 300
+    loop: "{{ vms }}"

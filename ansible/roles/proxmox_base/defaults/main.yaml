@@ -1,4 +1,18 @@
 ---
+pv_user: root@pam
+pv_host: pve
+
 cloudimg_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
 cloudimg_file: /home/noosxe/cloudimg.img
-cloudimg_vmid: 9000
+
+cvm:
+  id: 9000
+  name: ubuntu-cloud
+  cores: 2
+  memory: 2048
+
+vms:
+  - name: vm1
+    id: 150
+  - name: vm2
+    id: 151
