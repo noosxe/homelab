@@ -1,6 +1,8 @@
 ---
 pv_user: root@pam
 pv_host: pve
+pv_token_id: ansible
+pv_token_secret: "{{ undef(hint='You must specify pv_token_secret') }}"
 
 cloudimg_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
 cloudimg_file: /home/noosxe/cloudimg.img
@@ -12,7 +14,28 @@ cvm:
   memory: 2048
 
 vms:
-  - name: vm1
+  - name: time-machine-0
+    id: 101
+    ipv4:
+      addr: "192.168.10.101/24"
+      gw: "192.168.10.1"
+    sshkeyfile: "~/.ssh/id_ed25519.pub"
+
+  - name: k3s-control-0
     id: 150
-  - name: vm2
+    ipv4:
+      addr: "192.168.10.150/24"
+      gw: "192.168.10.1"
+    sshkeyfile: "~/.ssh/id_ed25519.pub"
+  - name: k3s-control-1
     id: 151
+    ipv4:
+      addr: "192.168.10.151/24"
+      gw: "192.168.10.1"
+    sshkeyfile: "~/.ssh/id_ed25519.pub"
+  - name: k3s-control-2
+    id: 152
+    ipv4:
+      addr: "192.168.10.152/24"
+      gw: "192.168.10.1"
+    sshkeyfile: "~/.ssh/id_ed25519.pub"
