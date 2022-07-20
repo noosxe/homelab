@@ -1,0 +1,4 @@
+- name: Time machine
+  hosts: time_machine
+  roles:
+    - time_machine

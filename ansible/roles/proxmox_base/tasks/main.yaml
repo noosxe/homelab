@@ -106,5 +106,18 @@
     ipconfig:
       ipconfig0: "ip={{ item.ipv4.addr }},gw={{ item.ipv4.gw }}"
     sshkeys: "{{ lookup('file', item.sshkeyfile) }}"
+    agent: yes
+    update: yes
+  loop: "{{ vms }}"
+
+- name: Start VMs
+  community.general.proxmox_kvm:
+    api_host: "{{ pv_host }}"
+    api_user: "{{ pv_user }}"
+    api_token_id: "{{ pv_token_id }}"
+    api_token_secret: "{{ pv_token_secret }}"
+    node: "{{ pv_host }}"
+    vmid: "{{ item.id }}"
+    state: started
     update: yes
   loop: "{{ vms }}"
