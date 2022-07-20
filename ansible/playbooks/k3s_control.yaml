@@ -1,0 +1,4 @@
+- name: k3s control
+  hosts: k3s_control
+  roles:
+    - basic_vm

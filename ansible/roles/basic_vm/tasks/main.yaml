@@ -11,3 +11,9 @@
     name: qemu-guest-agent
     state: started
     enabled: true
+
+- name: Install nfs-common
+  become: true
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
