@@ -1,4 +1,0 @@
-- name: Proxmox base
-  hosts: proxmox
-  roles:
-    - proxmox_base

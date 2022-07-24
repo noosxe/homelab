@@ -2,8 +2,16 @@
 - name: Set hostname
   become: true
   ansible.builtin.hostname:
-    name: "{{ hostname | ternary(hostname, name) }}"
+    name: "{{ hostname }}"
     use: systemd
+  when: hostname is defined
+
+- name: Set hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ name }}"
+    use: systemd
+  when: hostname is not defined
 
 - name: Place the hosts file
   become: true

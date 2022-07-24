@@ -1,4 +1,4 @@
-{% if hostname %}
+{% if hostname is defined %}
 {{ ansible_host }} {{ hostname }}
 {% else %}
 {{ ansible_host }} {{ name }}.local
