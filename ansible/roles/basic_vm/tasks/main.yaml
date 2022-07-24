@@ -17,3 +17,16 @@
   ansible.builtin.apt:
     name: nfs-common
     state: present
+
+- name: Allow OpenSSH
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+    src: 192.168.10.0/24
+
+- name: Deny everything and enable UFW
+  become: true
+  community.general.ufw:
+    state: enabled
+    policy: deny
