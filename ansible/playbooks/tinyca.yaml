@@ -1,0 +1,10 @@
+- name: TinyCA Proxmox
+  hosts: proxmox
+  roles:
+    - role: proxmox_base
+      vms: "{{ groups['tinyca'] | map('extract',hostvars) | list }}"
+
+- name: TinyCA
+  hosts: tinyca
+  roles:
+    - basic_vm
