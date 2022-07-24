@@ -2,6 +2,7 @@
   hosts: time_machine
   roles:
     - basic_vm
+    - samba
   tasks:
     - name: Create nfs mount dir
       become: true

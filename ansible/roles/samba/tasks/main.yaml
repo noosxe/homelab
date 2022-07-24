@@ -1,0 +1,15 @@
+---
+- name: Install Samba packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - samba
+      - samba-common
+    state: present
+
+- name: Configure Samba service
+  become: true
+  ansible.builtin.service:
+    name: smbd
+    state: started
+    enabled: true
