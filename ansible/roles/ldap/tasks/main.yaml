@@ -1,0 +1,49 @@
+---
+- name: Set hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ ldap_hostname }}"
+    use: systemd
+
+- name: Place the hosts file
+  become: true
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: Configure slapd install settings
+  become: true
+  ansible.builtin.debconf:
+    name: slapd
+    question: "{{ item['question'] }}"
+    value: "{{ item['value'] }}"
+    vtype: "{{ item['vtype'] }}"
+  loop:
+    - question: slapd/internal/generated_adminpw
+      value: "{{ openldap_admin_password }}"
+      vtype: password
+    - question: slapd/password2
+      value: "{{ openldap_admin_password }}"
+      vtype: password
+    - question: slapd/internal/adminpw
+      value: "{{ openldap_admin_password }}"
+      vtype: password
+    - question: slapd/password1
+      value: "{{ openldap_admin_password }}"
+      vtype: password
+    - question: slapd/domain
+      value: "{{ openldap_domain_name }}"
+      vtype: string
+    - question: shared/organization
+      value: "{{ openldap_org }}"
+      vtype: string
+    - question: slapd/backend
+      value: "{{ openldap_db_engine }}"
+      vtype: string
+
+- name: Install packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - slapd
+      - ldap-utils

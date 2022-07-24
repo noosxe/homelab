@@ -1,0 +1,11 @@
+- name: LDAP Proxmox
+  hosts: proxmox
+  roles:
+    - role: proxmox_base
+      vms: "{{ groups['ldap'] | map('extract',hostvars) | list }}"
+
+- name: LDAP
+  hosts: ldap
+  roles:
+    - basic_vm
+    - ldap

@@ -1,0 +1,10 @@
+---
+openldap_org: noosxe
+openldap_tld: com
+openldap_domain_name: "{{ openldap_org + '.' + openldap_tld }}"
+ldap_hostname: "{{ 'ldap.' + openldap_domain_name }}"
+
+openldap_admin_password: 123456
+
+# The database engine (mdb / hdb)
+openldap_db_engine: MDB
