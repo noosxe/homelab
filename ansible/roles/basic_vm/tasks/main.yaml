@@ -1,4 +1,21 @@
 ---
+- name: Set hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ hostname | ternary(hostname, name) }}"
+    use: systemd
+
+- name: Place the hosts file
+  become: true
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: Set timezone to America/Los_Angeles
+  become: true
+  community.general.timezone:
+    name: America/Los_Angeles
+
 - name: Install qemu-guest-agent
   become: true
   ansible.builtin.apt:

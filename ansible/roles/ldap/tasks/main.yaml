@@ -1,16 +1,4 @@
 ---
-- name: Set hostname
-  become: true
-  ansible.builtin.hostname:
-    name: "{{ ldap_hostname }}"
-    use: systemd
-
-- name: Place the hosts file
-  become: true
-  ansible.builtin.template:
-    src: hosts.j2
-    dest: /etc/hosts
-
 - name: Configure slapd install settings
   become: true
   ansible.builtin.debconf:
