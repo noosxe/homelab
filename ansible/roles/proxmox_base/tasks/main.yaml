@@ -44,6 +44,9 @@
     cores: "{{ cvm.cores }}"
     memory: "{{ cvm.memory }}"
     vmid: "{{ cvm.id }}"
+    localtime: no
+    agent: yes
+    onboot: yes
     net:
       net0: "virtio,bridge=vmbr0"
   register: template_vm_result
@@ -104,9 +107,9 @@
     node: "{{ pv_host }}"
     vmid: "{{ item.id }}"
     ipconfig:
-      ipconfig0: "ip={{ item.ipv4.addr }},gw={{ item.ipv4.gw }}"
+      ipconfig0: "ip={{ item.inventory_hostname }}/24,gw={{ item.gw }}"
     sshkeys: "{{ lookup('file', item.sshkeyfile) }}"
-    agent: yes
+
     update: yes
   loop: "{{ vms }}"
 
