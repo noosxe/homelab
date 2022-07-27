@@ -1,0 +1,52 @@
+---
+- name: Install yubikey-manager
+  become: true
+  ansible.builtin.apt:
+    name: yubikey-manager
+
+- name: Install step-ca
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ step_ca_url }}"
+
+- name: Install step-cli
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ step_url }}"
+
+- name: Create the step-ca dir
+  become: true
+  ansible.builtin.file:
+    path: /etc/step-ca
+    state: directory
+    mode: "0755"
+
+- name: Add the step-ca user
+  become: true
+  ansible.builtin.user:
+    name: step
+    home: /etc/step-ca
+    shell: /bin/false
+    system: true
+
+- name: Set CAP_NET_BIND_SERVICE=+eip on step-ca
+  become: true
+  community.general.capabilities:
+    path: /usr/bin/step-ca
+    capability: CAP_NET_BIND_SERVICE=+ep
+    state: present
+
+- name: Recursively change ownership of the step-ca dir
+  ansible.builtin.file:
+    path: /etc/step-ca
+    state: directory
+    recurse: yes
+    owner: step
+    group: step
+
+- name: Copy systemd unit
+  become: true
+  template:
+    src: step-ca.service.j2
+    dest: /etc/systemd/system/step-ca.service
+  notify: Start step CA

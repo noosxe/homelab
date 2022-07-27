@@ -8,3 +8,4 @@
   hosts: tinyca
   roles:
     - basic_vm
+    - tinyca
