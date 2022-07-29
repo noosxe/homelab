@@ -6,16 +6,16 @@ After=network-online.target
 Wants=network-online.target
 StartLimitIntervalSec=30
 StartLimitBurst=3
-ConditionFileNotEmpty=/etc/step-ca/config/ca.json
-ConditionFileNotEmpty=/etc/step-ca/password.txt
+ConditionFileNotEmpty={{ ca_dir }}/{{ config_file }}
+ConditionFileNotEmpty={{ ca_dir }}/{{ password_file }}
 
 [Service]
 Type=simple
-User=step
-Group=step
-Environment=STEPPATH=/etc/step-ca
-WorkingDirectory=/etc/step-ca
-ExecStart=/usr/bin/step-ca config/ca.json --password-file password.txt
+User={{ ca_user }}
+Group={{ ca_user }}
+Environment=STEPPATH={{ ca_dir }}
+WorkingDirectory={{ ca_dir }}
+ExecStart={{ step_ca_bin }} {{ config_file }} --password-file {{ password_file }}
 ExecReload=/bin/kill --signal HUP $MAINPID
 Restart=on-failure
 RestartSec=5
@@ -48,7 +48,7 @@ RestrictRealtime=true
 SystemCallFilter=@system-service
 SystemCallArchitectures=native
 MemoryDenyWriteExecute=true
-ReadWriteDirectories=/etc/step-ca/db
+ReadWriteDirectories={{ ca_dir }}/db
 
 [Install]
 WantedBy=multi-user.target

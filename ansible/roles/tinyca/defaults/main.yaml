@@ -1,3 +1,15 @@
 ---
 step_ca_url: https://dl.step.sm/gh-release/certificates/docs-ca-install/v0.21.0/step-ca_0.21.0_amd64.deb
 step_url: https://dl.step.sm/gh-release/cli/docs-ca-install/v0.21.0/step-cli_0.21.0_amd64.deb
+
+step_ca_bin: /usr/bin/step-ca
+
+password_file: password.txt
+config_file: config/ca.json
+
+ca_dir: /etc/step-ca
+ca_json: "{{ ca_dir }}/{{ config_file }}"
+ca_user: step
+ca_name: tinyca
+ca_dns: tinyca.local
+ca_provisioner: kirlevon@gmail.com
