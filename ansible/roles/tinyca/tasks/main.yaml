@@ -61,8 +61,8 @@
 
 - name: ca.json already exists
   ansible.builtin.debug:
-    msg: "This will fail when config already exists."
-  failed_when: ca_json_result.stat.exists
+    msg: "Config already exists!"
+  when: ca_json_result.stat.exists
 
 - name: Init step ca
   become: true
@@ -74,6 +74,7 @@
     STEPPATH: "{{ ca_dir }}"
   register: stepca_output
   notify: Start step CA
+  when: not ca_json_result.stat.exists
 
 - name: Display step ca init output
   debug:
@@ -90,3 +91,16 @@
     src: step-ca.service.j2
     dest: /etc/systemd/system/step-ca.service
   notify: Start step CA
+
+- name: Copy ufw profile
+  become: true
+  template:
+    src: step-ca-server.j2
+    dest: /etc/ufw/applications.d/step-ca-server
+
+- name: Allow step-ca
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: step-ca
+    src: 192.168.10.0/24
