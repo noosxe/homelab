@@ -113,6 +113,14 @@
     update: yes
   loop: "{{ vms }}"
 
+- name: Configure usb devices for vms
+  become: true
+  become_method: su
+  ansible.builtin.command:
+    cmd: /usr/sbin/qm set "{{ item[0].id }}" -"{{ item[1].name }}" host="{{ item[1].host }}"
+  loop: "{{ vms | subelements('usb_devices') }}"
+  when: item[0].usb_devices is defined and (item[0].usb_devices|length > 0)
+
 - name: Start VMs
   community.general.proxmox_kvm:
     api_host: "{{ pv_host }}"
