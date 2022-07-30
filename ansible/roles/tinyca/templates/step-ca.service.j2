@@ -2,8 +2,9 @@
 Description=step-ca service
 Documentation=https://smallstep.com/docs/step-ca
 Documentation=https://smallstep.com/docs/step-ca/certificate-authority-server-production
-After=network-online.target
 Wants=network-online.target
+BindsTo=dev-yubikey.device
+After=dev-yubikey.device
 StartLimitIntervalSec=30
 StartLimitBurst=3
 ConditionFileNotEmpty={{ ca_dir }}/{{ config_file }}
