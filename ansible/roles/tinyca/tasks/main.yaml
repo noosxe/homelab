@@ -85,6 +85,15 @@
     - "{{ stepca_output.stderr_lines }}"
   when: stepca_output.stdout_lines is defined and stepca_output.stderr_lines is defined
 
+- name: Add ACME provisioner
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.command:
+    cmd: step ca provisioner add acme --type acme --ca-config {{ ca_json }}
+  environment:
+    STEPPATH: "{{ ca_dir }}"
+  when: not ca_json_result.stat.exists
+
 - name: Copy systemd unit
   become: true
   template:
