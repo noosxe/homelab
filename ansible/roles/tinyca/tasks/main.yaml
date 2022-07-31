@@ -99,10 +99,7 @@
   template:
     src: 75-yubikey.rules.j2
     dest: /etc/udev/rules.d/75-yubikey.rules
-
-- name: Reload udevadm
-  become: true
-  shell: udevadm control --reload-rules
+  notify: Reload udevadm
 
 - name: Create dev-yubikey.device.wants directory
   become: true

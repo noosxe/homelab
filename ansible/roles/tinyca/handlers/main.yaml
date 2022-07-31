@@ -6,3 +6,7 @@
     name: step-ca
     enabled: yes
     state: started
+
+- name: Reload udevadm
+  become: true
+  shell: udevadm control --reload-rules
