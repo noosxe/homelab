@@ -94,11 +94,18 @@
     STEPPATH: "{{ ca_dir }}"
   when: not ca_json_result.stat.exists
 
-- name: Copy udev rules
+- name: Copy yubikey udev rules
   become: true
   template:
     src: 75-yubikey.rules.j2
     dest: /etc/udev/rules.d/75-yubikey.rules
+  notify: Reload udevadm
+
+- name: Copy flashdrive udev rules
+  become: true
+  template:
+    src: 76-flashdrive.rules.j2
+    dest: /etc/udev/rules.d/76-flashdrive.rules
   notify: Reload udevadm
 
 - name: Create dev-yubikey.device.wants directory

@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="block", ATTRS{idProduct}=="{{ flashdrive.idProduct }}", ATTRS{idVendor}=="{{ flashdrive.idVendor }}", SYMLINK+="flashdrive"
+ACTION=="remove", SUBSYSTEM=="block", ATTRS{idProduct}=="{{ flashdrive.idProduct }}", ATTRS{idVendor}=="{{ flashdrive.idVendor }}"
