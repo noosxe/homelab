@@ -117,7 +117,7 @@
   become: true
   become_method: su
   ansible.builtin.command:
-    cmd: /usr/sbin/qm set "{{ item[0].id }}" -"{{ item[1].name }}" host="{{ item[1].host }}"
+    cmd: /usr/sbin/qm set "{{ item[0].id }}" -"{{ item[1].name }}" host="{{ item[1].host }},usb3=yes"
   loop: "{{ vms | subelements('usb_devices') }}"
   when: item[0].usb_devices is defined and (item[0].usb_devices|length > 0)
 
@@ -131,4 +131,10 @@
     vmid: "{{ item.id }}"
     state: started
     update: yes
+  register: wait
   loop: "{{ vms }}"
+
+- name: Waiting for the VM to start
+  wait_for:
+    timeout: 45
+  when: wait.changed == true
