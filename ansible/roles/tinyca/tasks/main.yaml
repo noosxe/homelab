@@ -108,6 +108,14 @@
     dest: /etc/udev/rules.d/76-flashdrive.rules
   notify: Reload udevadm
 
+- name: Trigger udevadm add action
+  become: true
+  shell: udevadm trigger --action=add
+
+- name: Wait for /dev/flashdrive
+  wait_for:
+    path: /dev/flashdrive
+
 - name: Create dev-yubikey.device.wants directory
   become: true
   file:
@@ -129,6 +137,22 @@
     dest: /etc/systemd/system/dev-yubikey.device.wants/step-ca.service
     state: link
   notify: Start step CA
+
+- name: Unmount the flashdrive
+  become: true
+  mount:
+    src: /dev/flashdrive
+    path: /mnt
+    state: unmounted
+
+- name: Mount the flashdrive
+  become: true
+  mount:
+    src: /dev/flashdrive
+    path: /mnt
+    fstype: vfat
+    opts: noatime,rw
+    state: mounted
 
 - name: Copy ufw profile
   become: true
