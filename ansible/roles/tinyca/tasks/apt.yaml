@@ -1,0 +1,15 @@
+---
+- name: Install yubikey-manager
+  become: true
+  ansible.builtin.apt:
+    name: yubikey-manager
+
+- name: Install step-ca
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ step_ca_url }}"
+
+- name: Install step-cli
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ step_url }}"

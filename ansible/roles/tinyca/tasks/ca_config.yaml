@@ -1,0 +1,42 @@
+---
+- name: Check for {{ ca_json }}
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.stat:
+    path: "{{ ca_json }}"
+  register: ca_json_result
+
+- name: ca.json already exists
+  ansible.builtin.debug:
+    msg: "Config already exists!"
+  when: ca_json_result.stat.exists
+
+- name: Init step ca
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.command:
+    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address {{ ansible_host }}:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
+    creates: "{{ ca_json }}"
+  environment:
+    STEPPATH: "{{ ca_dir }}"
+  register: stepca_output
+  notify: Start step CA
+  when: not ca_json_result.stat.exists
+
+- name: Display step ca init output
+  debug:
+    msg: "{{ item }}"
+    verbosity: 2
+  with_items:
+    - "{{ stepca_output.stdout_lines }}"
+    - "{{ stepca_output.stderr_lines }}"
+  when: stepca_output.stdout_lines is defined and stepca_output.stderr_lines is defined
+
+- name: Add ACME provisioner
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.command:
+    cmd: step ca provisioner add acme --type acme --ca-config {{ ca_json }}
+  environment:
+    STEPPATH: "{{ ca_dir }}"
+  when: not ca_json_result.stat.exists

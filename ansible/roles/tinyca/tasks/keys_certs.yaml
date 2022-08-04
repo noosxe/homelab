@@ -1,0 +1,85 @@
+---
+- name: Unmount the flashdrive
+  become: true
+  mount:
+    path: "{{ ca_usb_dir }}"
+    state: unmounted
+
+- name: Mount the flashdrive
+  become: true
+  mount:
+    src: /dev/flashdrive
+    path: "{{ ca_usb_dir }}"
+    fstype: vfat
+    opts: "noatime,rw,uid={{ ca_user }},gid={{ ca_user }}"
+    state: mounted
+
+- name: Check for root_ca_key
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.stat:
+    path: "{{ ca_usb_dir }}/ca/secrets/root_ca_key"
+  register: root_ca_key_result
+
+- name: Log root_ca_key state
+  debug:
+    msg: "{{ root_ca_key_result.stat.exists }}"
+
+- name: Create the step-ca/usb/ca dir
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.file:
+    path: "{{ ca_usb_dir }}/ca"
+    state: directory
+    mode: "0700"
+  when: not root_ca_key_result.stat.exists
+
+- name: Generate PKI
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.command:
+    cmd: step ca init --name {{ ca_name }} --pki --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
+  environment:
+    STEPPATH: "{{ ca_usb_dir }}/ca"
+  register: stepca_pki_output
+  when: not root_ca_key_result.stat.exists
+
+- name: Display step ca init --pki output
+  debug:
+    msg: "{{ item }}"
+    verbosity: 2
+  with_items:
+    - "{{ stepca_pki_output.stdout_lines }}"
+    - "{{ stepca_pki_output.stderr_lines }}"
+  when: stepca_pki_output.stdout_lines is defined and stepca_pki_output.stderr_lines is defined
+
+- name: Create a temp dir for certs
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.file:
+    path: "{{ ca_tmp_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Copy certs from the usb drive
+  become: true
+  become_user: "{{ ca_user }}"
+  copy:
+    remote_src: yes
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {
+        src: "{{ ca_usb_dir }}/ca/certs/intermediate_ca.crt",
+        dest: "{{ ca_tmp_dir }}/intermediate_ca.crt",
+      }
+    - {
+        src: "{{ ca_usb_dir }}/ca/certs/root_ca.crt",
+        dest: "{{ ca_tmp_dir }}/root_ca.crt",
+      }
+
+- name: Unmount the flashdrive
+  become: true
+  mount:
+    path: "{{ ca_usb_dir }}"
+    state: unmounted

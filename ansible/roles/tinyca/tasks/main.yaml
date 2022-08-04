@@ -1,168 +1,21 @@
 ---
-- name: Copy yubikey udev rules
-  become: true
-  template:
-    src: 75-yubikey.rules.j2
-    dest: /etc/udev/rules.d/75-yubikey.rules
-  notify: Reload udevadm
+- name: Install apt packages
+  import_tasks: apt.yaml
 
-- name: Copy flashdrive udev rules
-  become: true
-  template:
-    src: 76-flashdrive.rules.j2
-    dest: /etc/udev/rules.d/76-flashdrive.rules
-  notify: Reload udevadm
+- name: Install udev rules
+  import_tasks: udev.yaml
 
-- name: Trigger udevadm add action
-  become: true
-  shell: udevadm trigger --action=add
+- name: Setup systemd step-ca unit
+  import_tasks: systemd.yaml
 
-- name: Wait for /dev/flashdrive
-  wait_for:
-    path: /dev/flashdrive
+- name: Setup step-ca service environment
+  import_tasks: service_env.yaml
 
-- name: Create dev-yubikey.device.wants directory
-  become: true
-  file:
-    path: /etc/systemd/system/dev-yubikey.device.wants
-    state: directory
-    mode: "0755"
+- name: Setup CA certs and keys
+  import_tasks: keys_certs.yaml
 
-- name: Copy systemd unit
-  become: true
-  template:
-    src: step-ca.service.j2
-    dest: /etc/systemd/system/step-ca.service
-  notify: Start step CA
+- name: Initialize CA config
+  import_tasks: ca_config.yaml
 
-- name: Create symbolic link
-  become: true
-  file:
-    src: /etc/systemd/system/step-ca.service
-    dest: /etc/systemd/system/dev-yubikey.device.wants/step-ca.service
-    state: link
-  notify: Start step CA
-
-- name: Unmount the flashdrive
-  become: true
-  mount:
-    src: /dev/flashdrive
-    path: /mnt
-    state: unmounted
-
-- name: Mount the flashdrive
-  become: true
-  mount:
-    src: /dev/flashdrive
-    path: /mnt
-    fstype: vfat
-    opts: noatime,rw
-    state: mounted
-
-- name: Install yubikey-manager
-  become: true
-  ansible.builtin.apt:
-    name: yubikey-manager
-
-- name: Install step-ca
-  become: true
-  ansible.builtin.apt:
-    deb: "{{ step_ca_url }}"
-
-- name: Install step-cli
-  become: true
-  ansible.builtin.apt:
-    deb: "{{ step_url }}"
-
-- name: Create the step-ca dir
-  become: true
-  ansible.builtin.file:
-    path: "{{ ca_dir }}"
-    state: directory
-    mode: "0755"
-
-- name: Add the step-ca user
-  become: true
-  ansible.builtin.user:
-    name: "{{ ca_user }}"
-    home: "{{ ca_dir }}"
-    shell: /bin/false
-    system: true
-
-- name: Set CAP_NET_BIND_SERVICE=+eip on step-ca
-  become: true
-  community.general.capabilities:
-    path: "{{ step_ca_bin }}"
-    capability: CAP_NET_BIND_SERVICE=+ep
-    state: present
-
-- name: Copy the password file
-  become: true
-  ansible.builtin.copy:
-    src: "./files/password.txt"
-    dest: "{{ ca_dir }}/{{ password_file }}"
-    mode: "0700"
-
-- name: Recursively change ownership of the step-ca dir
-  become: true
-  ansible.builtin.file:
-    path: "{{ ca_dir }}"
-    state: directory
-    recurse: yes
-    owner: "{{ ca_user }}"
-    group: "{{ ca_user }}"
-
-- name: Check for {{ ca_json }}
-  become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.stat:
-    path: "{{ ca_json }}"
-  register: ca_json_result
-
-- name: ca.json already exists
-  ansible.builtin.debug:
-    msg: "Config already exists!"
-  when: ca_json_result.stat.exists
-
-- name: Init step ca
-  become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.command:
-    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address {{ ansible_host }}:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
-    creates: "{{ ca_json }}"
-  environment:
-    STEPPATH: "{{ ca_dir }}"
-  register: stepca_output
-  notify: Start step CA
-  when: not ca_json_result.stat.exists
-
-- name: Display step ca init output
-  debug:
-    msg: "{{ item }}"
-    verbosity: 2
-  with_items:
-    - "{{ stepca_output.stdout_lines }}"
-    - "{{ stepca_output.stderr_lines }}"
-  when: stepca_output.stdout_lines is defined and stepca_output.stderr_lines is defined
-
-- name: Add ACME provisioner
-  become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.command:
-    cmd: step ca provisioner add acme --type acme --ca-config {{ ca_json }}
-  environment:
-    STEPPATH: "{{ ca_dir }}"
-  when: not ca_json_result.stat.exists
-
-- name: Copy ufw profile
-  become: true
-  template:
-    src: step-ca-server.j2
-    dest: /etc/ufw/applications.d/step-ca-server
-
-- name: Allow step-ca
-  become: true
-  community.general.ufw:
-    rule: allow
-    name: step-ca
-    src: 192.168.10.0/24
+- name: Setup firewall
+  import_tasks: firewall.yaml

@@ -8,6 +8,8 @@ password_file: password.txt
 config_file: config/ca.json
 
 ca_dir: /etc/step-ca
+ca_usb_dir: "{{ ca_dir }}/usb"
+ca_tmp_dir: "{{ ca_dir }}/tmp"
 ca_json: "{{ ca_dir }}/{{ config_file }}"
 ca_user: step
 ca_name: tinyca

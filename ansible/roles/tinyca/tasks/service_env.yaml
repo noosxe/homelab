@@ -1,0 +1,45 @@
+---
+- name: Create the step-ca dir
+  become: true
+  ansible.builtin.file:
+    path: "{{ ca_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Create the step-ca/usb dir
+  become: true
+  ansible.builtin.file:
+    path: "{{ ca_dir }}/usb"
+    state: directory
+    mode: "0700"
+
+- name: Add the step-ca user
+  become: true
+  ansible.builtin.user:
+    name: "{{ ca_user }}"
+    home: "{{ ca_dir }}"
+    shell: /bin/false
+    system: true
+
+- name: Set CAP_NET_BIND_SERVICE=+eip on step-ca
+  become: true
+  community.general.capabilities:
+    path: "{{ step_ca_bin }}"
+    capability: CAP_NET_BIND_SERVICE=+ep
+    state: present
+
+- name: Copy the password file
+  become: true
+  ansible.builtin.copy:
+    src: "./files/password.txt"
+    dest: "{{ ca_dir }}/{{ password_file }}"
+    mode: "0700"
+
+- name: Recursively change ownership of the step-ca dir
+  become: true
+  ansible.builtin.file:
+    path: "{{ ca_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ ca_user }}"
+    group: "{{ ca_user }}"

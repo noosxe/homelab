@@ -1,0 +1,13 @@
+---
+- name: Copy ufw profile
+  become: true
+  template:
+    src: step-ca-server.j2
+    dest: /etc/ufw/applications.d/step-ca-server
+
+- name: Allow step-ca
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: step-ca
+    src: 192.168.10.0/24
