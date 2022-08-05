@@ -1,4 +1,14 @@
 ---
+- name: Grow partition
+  become: true
+  command: growpart /dev/sda 1
+  ignore_errors: true
+
+- name: resize2fs
+  become: true
+  command: resize2fs /dev/sda1
+  ignore_errors: true
+
 - name: Set hostname
   become: true
   ansible.builtin.hostname:
