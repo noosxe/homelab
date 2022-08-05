@@ -1,8 +1,13 @@
 ---
-- name: Install yubikey-manager
+- name: Install pip
   become: true
   ansible.builtin.apt:
-    name: yubikey-manager
+    name: python3-pip
+
+- name: Install yubikey-manager
+  become: true
+  ansible.builtin.pip:
+    name: yubikey-manager==4.0.9
 
 - name: Install step-ca
   become: true
