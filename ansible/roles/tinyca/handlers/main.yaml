@@ -5,7 +5,7 @@
     daemon_reload: yes
     name: step-ca
     enabled: yes
-    state: started
+    state: restarted
 
 - name: Reload udevadm
   become: true

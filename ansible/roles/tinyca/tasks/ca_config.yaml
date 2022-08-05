@@ -20,7 +20,6 @@
   environment:
     STEPPATH: "{{ ca_dir }}"
   register: stepca_output
-  notify: Start step CA
   when: not ca_json_result.stat.exists
 
 - name: Display step ca init output
@@ -40,3 +39,18 @@
   environment:
     STEPPATH: "{{ ca_dir }}"
   when: not ca_json_result.stat.exists
+
+- name: Move cert files
+  become: true
+  become_user: "{{ ca_user }}"
+  command: "mv {{ item.src }} {{ item.dest }}"
+  loop:
+    - {
+        src: "{{ ca_tmp_dir }}/intermediate_ca.crt",
+        dest: "{{ ca_dir }}/certs/intermediate_ca.crt",
+      }
+    - {
+        src: "{{ ca_tmp_dir }}/root_ca.crt",
+        dest: "{{ ca_dir }}/certs/root_ca.crt",
+      }
+  notify: Start step CA
