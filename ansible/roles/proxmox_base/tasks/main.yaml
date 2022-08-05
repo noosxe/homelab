@@ -113,6 +113,13 @@
     update: yes
   loop: "{{ vms }}"
 
+- name: Configure disk size for vms
+  become: true
+  become_method: su
+  command: /usr/sbin/qm resize {{ item.id }} scsi0 {{ item.disk }}
+  loop: "{{ vms }}"
+  when: item.disk is defined
+
 - name: Configure usb devices for vms
   become: true
   become_method: su
