@@ -58,14 +58,6 @@
   loop_control:
     loop_var: "user"
 
-- name: Copy the password file
-  become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.copy:
-    src: "./files/password.txt"
-    dest: "{{ ca_dir }}/{{ password_file }}"
-    mode: "0700"
-
 - name: Change ownership of the step-ca dir
   become: true
   ansible.builtin.file:
@@ -73,3 +65,11 @@
     state: directory
     owner: "{{ ca_user }}"
     group: "{{ ca_user }}"
+
+- name: Copy the password file
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.copy:
+    src: "./files/password.txt"
+    dest: "{{ ca_dir }}/{{ password_file }}"
+    mode: "0700"
