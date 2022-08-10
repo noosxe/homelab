@@ -26,4 +26,4 @@ jobs:
             SMALLSTEP_CLI_VERSION=0.21.0
             SMALLSTEP_CA_VERSION=0.21.0
           push: true
-          tags: noosxe/step-ca-debian:latest
+          tags: noosxe/homelab/step-ca-debian:latest
