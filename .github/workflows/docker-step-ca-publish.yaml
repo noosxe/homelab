@@ -26,6 +26,8 @@ jobs:
             SMALLSTEP_CLI_VERSION=0.21.0
             SMALLSTEP_CA_VERSION=0.21.0
           cache-from: |
-            ghcr.io/noosxe/homelab/step-ca-debian:latest
+            type=gha
+          cache-to: |
+            type=gha
           push: true
           tags: ghcr.io/noosxe/homelab/step-ca-debian:latest
