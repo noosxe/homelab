@@ -20,7 +20,7 @@ RUN make GOFLAGS="" V=1 build
 FROM debian:bullseye
 
 ARG SMALLSTEP_CLI_VERSION
-ARG STEPUID=1000
+ARG STEPUID=1500
 
 COPY --from=builder /src/bin/step-ca            /usr/local/bin/step-ca
 COPY --from=builder /src/bin/step-awskms-init   /usr/local/bin/step-awskms-init
