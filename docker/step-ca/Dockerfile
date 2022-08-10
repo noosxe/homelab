@@ -45,5 +45,5 @@ VOLUME ["/home/step"]
 STOPSIGNAL SIGTERM
 HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
 
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
-CMD exec /usr/local/bin/step-ca --password-file $PWDPATH $CONFIGPATH
+ENTRYPOINT /usr/local/bin/step-ca
+CMD --password-file $PWDPATH $CONFIGPATH
