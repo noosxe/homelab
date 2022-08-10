@@ -14,12 +14,10 @@ ConditionFileNotEmpty={{ ca_dir }}/{{ password_file }}
 Type=simple
 User={{ ca_user }}
 Group={{ ca_user }}
-Environment=STEPPATH={{ ca_dir }}
 WorkingDirectory={{ ca_dir }}
-ExecStart={{ step_ca_bin }} {{ config_file }} --password-file {{ password_file }}
-ExecReload=/bin/kill --signal HUP $MAINPID
+ExecStart={{ podman_bin }} run --cap-add=CAP_NET_BIND_SERVICE -t --volume={{ ca_dir }}:/etc/step-ca {{ step_ca_image }}
 Restart=on-failure
-RestartSec=5
+RestartSec=10
 TimeoutStopSec=30
 StartLimitInterval=30
 StartLimitBurst=3
@@ -29,27 +27,6 @@ AmbientCapabilities=CAP_NET_BIND_SERVICE
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 SecureBits=keep-caps
 NoNewPrivileges=yes
-
-; Sandboxing
-ProtectSystem=full
-ProtectHome=true
-RestrictNamespaces=true
-RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
-PrivateTmp=true
-PrivateDevices=true
-ProtectClock=true
-ProtectControlGroups=true
-ProtectKernelTunables=true
-ProtectKernelLogs=true
-ProtectKernelModules=true
-LockPersonality=true
-RestrictSUIDSGID=true
-RemoveIPC=true
-RestrictRealtime=true
-SystemCallFilter=@system-service
-SystemCallArchitectures=native
-MemoryDenyWriteExecute=true
-ReadWriteDirectories={{ ca_dir }}/db
 
 [Install]
 WantedBy=multi-user.target

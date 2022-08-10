@@ -14,6 +14,14 @@
     opts: "noatime,rw,uid={{ ca_user }},gid={{ ca_user }}"
     state: mounted
 
+- name: Change ownership of the step-ca/usb dir
+  become: true
+  ansible.builtin.file:
+    path: "{{ ca_usb_dir }}"
+    state: directory
+    owner: "{{ ca_user }}"
+    group: "{{ ca_user }}"
+
 - name: Check for root_ca_key
   become: true
   become_user: "{{ ca_user }}"
