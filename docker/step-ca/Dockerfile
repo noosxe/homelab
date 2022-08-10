@@ -38,6 +38,7 @@ RUN dpkg -i /tmp/step.deb && rm -f /tmp/step.deb
 COPY --from=builder /src/docker/entrypoint.sh /entrypoint.sh
 USER step
 
+ENV STEPPATH="/home/step"
 ENV CONFIGPATH="/home/step/config/ca.json"
 ENV PWDPATH="/home/step/secrets/password"
 
