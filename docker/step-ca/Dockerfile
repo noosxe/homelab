@@ -46,4 +46,4 @@ STOPSIGNAL SIGTERM
 HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
 
 ENTRYPOINT /usr/local/bin/step-ca
-CMD --password-file $PWDPATH $CONFIGPATH
+CMD "--password-file $PWDPATH $CONFIGPATH"
