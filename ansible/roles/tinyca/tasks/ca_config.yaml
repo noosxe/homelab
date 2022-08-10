@@ -54,3 +54,13 @@
         dest: "{{ ca_dir }}/certs/root_ca.crt",
       }
   notify: Start step CA
+
+- name: Delete step-ca secrets
+  become: true
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ca_dir }}/secrets/intermediate_ca_key"
+    - "{{ ca_dir }}/secrets/root_ca_key"
+  notify: Start step CA
