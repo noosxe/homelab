@@ -25,9 +25,7 @@ jobs:
           build-args: |
             SMALLSTEP_CLI_VERSION=0.21.0
             SMALLSTEP_CA_VERSION=0.21.0
-          cache-from: |
-            type=gha
-          cache-to: |
-            type=gha
+          cache-from: type=registry,ref=ghcr.io/noosxe/homelab/step-ca-debian:buildcache
+          cache-to: type=registry,ref=ghcr.io/noosxe/homelab/step-ca-debian:buildcache,mode=max
           push: true
           tags: ghcr.io/noosxe/homelab/step-ca-debian:latest
