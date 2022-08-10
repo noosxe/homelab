@@ -34,11 +34,11 @@ RUN apt-get install -y curl libpcsclite1 pcscd
 RUN curl -L -o /tmp/step.deb https://dl.step.sm/gh-release/cli/gh-release-header/v${SMALLSTEP_CLI_VERSION}/step-cli_${SMALLSTEP_CLI_VERSION}_amd64.deb
 RUN dpkg -i /tmp/step.deb && rm -f /tmp/step.deb
 
-ENV STEPPATH="/opt/step"
-ENV CONFIGPATH="/opt/step/config/ca.json"
-ENV PWDPATH="/opt/step/secrets/password"
+ENV STEPPATH="/etc/step-ca"
+ENV CONFIGPATH="/etc/step-ca/config/ca.json"
+ENV PWDPATH="/etc/step-ca/secrets/password"
 
-VOLUME ["/opt/step"]
+VOLUME ["/etc/step-ca"]
 STOPSIGNAL SIGTERM
 HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
 
