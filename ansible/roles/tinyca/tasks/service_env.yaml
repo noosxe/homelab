@@ -73,3 +73,18 @@
     src: "./files/password.txt"
     dest: "{{ ca_dir }}/{{ password_file }}"
     mode: "0700"
+
+- name: Create the podman config dir
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.file:
+    path: "{{ ca_dir }}/.config/containers/"
+    state: directory
+    mode: "0755"
+
+- name: Install podman config
+  become: true
+  become_user: "{{ ca_user }}"
+  template:
+    src: containers.conf.j2
+    dest: "{{ ca_dir }}/.config/containers/containers.conf"

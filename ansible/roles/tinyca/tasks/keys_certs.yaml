@@ -1,4 +1,11 @@
 ---
+- name: Stop step-ca.service
+  become: true
+  service:
+    name: step-ca
+    enabled: yes
+    state: stopped
+
 - name: Unmount the flashdrive
   become: true
   mount:

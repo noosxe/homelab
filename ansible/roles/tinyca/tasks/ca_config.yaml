@@ -15,7 +15,7 @@
   become: true
   become_user: "{{ ca_user }}"
   ansible.builtin.command:
-    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address {{ ansible_host }}:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
+    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address localhost:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
     creates: "{{ ca_json }}"
   environment:
     STEPPATH: "{{ ca_dir }}"
@@ -63,4 +63,18 @@
   loop:
     - "{{ ca_dir }}/secrets/intermediate_ca_key"
     - "{{ ca_dir }}/secrets/root_ca_key"
+  notify: Start step CA
+
+- name: Setup step-ca config
+  become: true
+  become_user: "{{ ca_user }}"
+  replace:
+    path: "{{ ca_json }}"
+    regexp: '^\s*("key":\s*"\/etc\/step-ca\/secrets\/intermediate_ca_key",)\s*$'
+    replace: |
+      "key": "yubikey:slot-id=9c",
+      "kms": {
+        "type": "yubikey",
+        "pin": "123456"
+      },
   notify: Start step CA

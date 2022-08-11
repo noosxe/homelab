@@ -1,2 +1,2 @@
-ACTION=="add", SUBSYSTEM=="usb", ENV{PRODUCT}=="{{ yubikey }}", TAG+="systemd", SYMLINK+="yubikey"
-ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="{{ yubikey }}" TAG+="systemd"
+ACTION=="add", SUBSYSTEM=="usb", ENV{PRODUCT}=="{{ yubikey }}", TAG+="systemd", SYMLINK+="yubikey", OWNER="step", GROUP="step"
+ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="{{ yubikey }}", TAG+="systemd"
