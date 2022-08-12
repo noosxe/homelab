@@ -2,8 +2,8 @@
 - name: Start step CA
   become: true
   systemd:
-    daemon_reload: yes
     name: step-ca
+    daemon-reload: yes
     enabled: yes
     state: restarted
 

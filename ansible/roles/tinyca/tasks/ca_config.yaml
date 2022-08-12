@@ -64,10 +64,17 @@
         src: "{{ ca_usb_dir }}/ca/secrets/intermediate_ca_key",
         dest: "{{ ca_dir }}/secrets/intermediate_ca_key",
       }
-  notify: Start step CA
 
 - name: Unmount the flashdrive
   become: true
   mount:
     path: "{{ ca_usb_dir }}"
     state: unmounted
+
+- name: Start step CA
+  become: true
+  systemd:
+    name: step-ca
+    daemon-reload: yes
+    enabled: yes
+    state: restarted

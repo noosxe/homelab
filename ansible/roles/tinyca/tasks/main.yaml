@@ -1,26 +1,4 @@
 ---
-- name: Copy cgroup-v2 grub cfg
-  become: true
-  template:
-    src: cgroup-v2.cfg.j2
-    dest: /etc/default/grub.d/100-cgroup-v2.cfg
-  register: grucfg_installed
-
-- name: Update grub
-  become: true
-  command: update-grub
-
-- name: Reboot the host
-  become: true
-  reboot:
-    msg: "Reboot initiated by Ansible"
-    connect_timeout: 5
-    reboot_timeout: 300
-    pre_reboot_delay: 0
-    post_reboot_delay: 30
-    test_command: uptime
-  when: grucfg_installed.changed
-
 - name: Install apt packages
   import_tasks: apt.yaml
 

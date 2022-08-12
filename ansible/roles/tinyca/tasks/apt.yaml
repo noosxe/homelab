@@ -1,28 +1,30 @@
 ---
 - name: Install pip
   become: true
-  ansible.builtin.apt:
+  apt:
     name: python3-pip
 
-- name: Add the kubic repo key
+- name: Add the docker gpg key
   become: true
-  ansible.builtin.apt_key:
-    url: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ ansible_distribution_version }}/Release.key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add the kubic repo
+- name: Add the docker repo
   become: true
-  ansible.builtin.apt_repository:
-    repo: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ ansible_distribution_version }}/ /"
-    filename: devel:kubic:libcontainers:stable.list
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu/ focal stable"
     state: present
 
-- name: Install podman
+- name: Install docker-ce
   become: true
-  ansible.builtin.apt:
-    name: podman
+  apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
 
 - name: Install step-cli
   become: true
-  ansible.builtin.apt:
+  apt:
     deb: "{{ step_url }}"

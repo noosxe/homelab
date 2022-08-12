@@ -17,6 +17,8 @@
   become: true
   ansible.builtin.user:
     name: "{{ ca_user }}"
+    groups:
+      - docker
     home: "{{ ca_dir }}"
     shell: /bin/bash
     uid: "{{ ca_uid }}"
@@ -26,43 +28,12 @@
   getent:
     database: passwd
 
-- name: Set subuids
-  become: true
-  ansible.builtin.lineinfile:
-    path: "/etc/subuid"
-    regexp: "{{ user }}"
-    line: "{{ user }}:{{ getent_passwd[user].1 | int | bitwise_shift_left(16) }}:65536"
-    backup: true
-    create: true
-    mode: 0644
-    owner: root
-    group: root
-  loop:
-    - "{{ ca_user }}"
-  loop_control:
-    loop_var: "user"
-
-- name: Set subgids
-  become: true
-  ansible.builtin.lineinfile:
-    path: "/etc/subgid"
-    regexp: "{{ user }}"
-    line: "{{ user }}:{{ getent_passwd[user].2 | int | bitwise_shift_left(16) }}:65536"
-    backup: true
-    create: true
-    mode: 0644
-    owner: root
-    group: root
-  loop:
-    - "{{ ca_user }}"
-  loop_control:
-    loop_var: "user"
-
 - name: Change ownership of the step-ca dir
   become: true
   ansible.builtin.file:
     path: "{{ ca_dir }}"
     state: directory
+    recurse: yes
     owner: "{{ ca_user }}"
     group: "{{ ca_user }}"
 
@@ -73,18 +44,3 @@
     src: "./files/password.txt"
     dest: "{{ ca_dir }}/{{ password_file }}"
     mode: "0700"
-
-- name: Create the podman config dir
-  become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.file:
-    path: "{{ ca_dir }}/.config/containers/"
-    state: directory
-    mode: "0755"
-
-- name: Install podman config
-  become: true
-  become_user: "{{ ca_user }}"
-  template:
-    src: containers.conf.j2
-    dest: "{{ ca_dir }}/.config/containers/containers.conf"
