@@ -4,33 +4,6 @@
   ansible.builtin.apt:
     name: python3-pip
 
-- name: Install libpcsclite-dev
-  become: true
-  ansible.builtin.apt:
-    name: libpcsclite-dev
-
-- name: Install pcscd
-  become: true
-  ansible.builtin.apt:
-    name: pcscd
-
-- name: Enable pcscd service
-  become: true
-  service:
-    name: pcscd
-    enabled: yes
-    state: started
-
-- name: Install swig
-  become: true
-  ansible.builtin.pip:
-    name: swig
-
-- name: Install yubikey-manager
-  become: true
-  ansible.builtin.pip:
-    name: yubikey-manager==4.0.9
-
 - name: Add the kubic repo key
   become: true
   ansible.builtin.apt_key:

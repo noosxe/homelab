@@ -40,41 +40,34 @@
     STEPPATH: "{{ ca_dir }}"
   when: not ca_json_result.stat.exists
 
-- name: Move cert files
+- name: Copy files from the usb drive
   become: true
   become_user: "{{ ca_user }}"
-  command: "mv {{ item.src }} {{ item.dest }}"
+  copy:
+    remote_src: yes
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   loop:
     - {
-        src: "{{ ca_tmp_dir }}/intermediate_ca.crt",
+        src: "{{ ca_usb_dir }}/ca/certs/intermediate_ca.crt",
         dest: "{{ ca_dir }}/certs/intermediate_ca.crt",
       }
     - {
-        src: "{{ ca_tmp_dir }}/root_ca.crt",
+        src: "{{ ca_usb_dir }}/ca/certs/root_ca.crt",
         dest: "{{ ca_dir }}/certs/root_ca.crt",
+      }
+    - {
+        src: "{{ ca_usb_dir }}/ca/secrets/root_ca_key",
+        dest: "{{ ca_dir }}/secrets/root_ca_key",
+      }
+    - {
+        src: "{{ ca_usb_dir }}/ca/secrets/intermediate_ca_key",
+        dest: "{{ ca_dir }}/secrets/intermediate_ca_key",
       }
   notify: Start step CA
 
-- name: Delete step-ca secrets
+- name: Unmount the flashdrive
   become: true
-  file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - "{{ ca_dir }}/secrets/intermediate_ca_key"
-    - "{{ ca_dir }}/secrets/root_ca_key"
-  notify: Start step CA
-
-- name: Setup step-ca config
-  become: true
-  become_user: "{{ ca_user }}"
-  replace:
-    path: "{{ ca_json }}"
-    regexp: '^\s*("key":\s*"\/etc\/step-ca\/secrets\/intermediate_ca_key",)\s*$'
-    replace: |
-      "key": "yubikey:slot-id=9c",
-      "kms": {
-        "type": "yubikey",
-        "pin": "123456"
-      },
-  notify: Start step CA
+  mount:
+    path: "{{ ca_usb_dir }}"
+    state: unmounted
