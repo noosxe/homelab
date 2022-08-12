@@ -3,6 +3,7 @@
   roles:
     - role: proxmox_base
       vms: "{{ groups['tinyca'] | map('extract',hostvars) | list }}"
+      when: tinyca_full is defined
 
 - name: TinyCA
   hosts: tinyca
