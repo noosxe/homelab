@@ -35,12 +35,9 @@ RUN curl -L -o /tmp/step.deb https://dl.step.sm/gh-release/cli/gh-release-header
 RUN dpkg -i /tmp/step.deb && rm -f /tmp/step.deb
 
 ENV STEPPATH="/etc/step-ca"
-ENV CONFIGPATH="/etc/step-ca/config/ca.json"
-ENV PWDPATH="/etc/step-ca/secrets/password"
 
 VOLUME ["/etc/step-ca"]
 STOPSIGNAL SIGTERM
 HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
 
-ENTRYPOINT /usr/local/bin/step-ca
-CMD "--password-file $PWDPATH $CONFIGPATH"
+CMD /usr/local/bin/step-ca
