@@ -40,6 +40,6 @@ EXPOSE 443
 
 VOLUME ["/etc/step-ca"]
 STOPSIGNAL SIGTERM
-HEALTHCHECK CMD curl -fk https://localhost:443/health || exit 1
+HEALTHCHECK --interval=10s --timeout=5s --retries=5 CMD curl -fk https://localhost:443/health || exit 1
 
 CMD /usr/local/bin/step-ca
