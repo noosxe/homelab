@@ -14,9 +14,16 @@ Group={{ ca_user }}
 WorkingDirectory={{ ca_dir }}
 Restart=on-failure
 ExecStartPre=/usr/bin/docker pull {{ step_ca_image }}
-ExecStart=/usr/bin/docker run --rm --name %n --cap-add=CAP_NET_BIND_SERVICE --expose=443 --volume={{ ca_dir }}:/etc/step-ca {{ step_ca_image }} /usr/local/bin/step-ca --password-file={{ ca_dir }}/{{ password_file }} {{ ca_dir }}/{{ config_file }}
+ExecStart=/usr/bin/docker run --rm --name %n --cap-add=CAP_NET_BIND_SERVICE -p 443:443 --volume={{ ca_dir }}:/etc/step-ca {{ step_ca_image }} /usr/local/bin/step-ca --password-file={{ ca_dir }}/{{ password_file }} {{ ca_dir }}/{{ config_file }}
+ExecStop=/usr/bin/docker stop %n
 KillMode=none
 Type=exec
+
+; Process capabilities & privileges
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+SecureBits=keep-caps
+NoNewPrivileges=yes
 
 [Install]
 WantedBy=default.target
