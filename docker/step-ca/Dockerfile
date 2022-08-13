@@ -20,7 +20,7 @@ RUN make GOFLAGS="" V=1 build
 FROM debian:bullseye
 
 ARG SMALLSTEP_CLI_VERSION
-ARG UID
+ARG UID=1500
 
 COPY --from=builder /src/bin/step-ca            /usr/local/bin/step-ca
 COPY --from=builder /src/bin/step-awskms-init   /usr/local/bin/step-awskms-init
@@ -29,7 +29,7 @@ COPY --from=builder /src/bin/step-pkcs11-init   /usr/local/bin/step-pkcs11-init
 COPY --from=builder /src/bin/step-yubikey-init  /usr/local/bin/step-yubikey-init
 
 USER root
-RUN adduser --uid ${UID} --disabled-password step
+RUN adduser -m --uid ${UID} --disabled-password step
 RUN apt-get update
 RUN apt-get install -y libcap2-bin && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/step-ca
 RUN apt-get install -y curl libpcsclite1 pcscd
