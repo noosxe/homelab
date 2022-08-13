@@ -15,7 +15,7 @@
   become: true
   become_user: "{{ ca_user }}"
   ansible.builtin.command:
-    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address localhost:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
+    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address 0.0.0.0:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
     creates: "{{ ca_json }}"
   environment:
     STEPPATH: "{{ ca_dir }}"
