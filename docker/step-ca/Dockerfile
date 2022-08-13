@@ -36,6 +36,8 @@ RUN dpkg -i /tmp/step.deb && rm -f /tmp/step.deb
 
 ENV STEPPATH="/etc/step-ca"
 
+EXPOSE 443
+
 VOLUME ["/etc/step-ca"]
 STOPSIGNAL SIGTERM
 HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
