@@ -42,4 +42,7 @@ VOLUME ["/etc/step-ca"]
 STOPSIGNAL SIGTERM
 HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
 
-CMD /usr/local/bin/step-ca
+COPY docker/entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+
+CMD exec /usr/local/bin/step-ca
