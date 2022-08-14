@@ -1,4 +1,7 @@
 ---
+- name: Include secrets
+  include_vars: ../../../secrets.yaml
+
 - name: Install apt packages
   import_tasks: apt.yaml
 

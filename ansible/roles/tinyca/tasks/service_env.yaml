@@ -39,8 +39,9 @@
 
 - name: Copy the password file
   become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.copy:
-    src: "./files/password.txt"
+  ansible.builtin.template:
+    src: "password.txt.j2"
     dest: "{{ ca_dir }}/{{ password_file }}"
     mode: "0700"
+    owner: "{{ ca_user }}"
+    group: "{{ ca_user }}"
