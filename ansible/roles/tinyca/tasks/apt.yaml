@@ -1,4 +1,9 @@
 ---
+- name: Install ubuntu acl package
+  become: true
+  apt:
+    name: acl
+
 - name: Install pip
   become: true
   apt:
