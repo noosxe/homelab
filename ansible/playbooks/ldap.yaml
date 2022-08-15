@@ -3,6 +3,7 @@
   roles:
     - role: proxmox_base
       vms: "{{ groups['ldap'] | map('extract',hostvars) | list }}"
+      when: openldap_full is defined
 
 - name: LDAP
   hosts: ldap
