@@ -1,4 +1,7 @@
 ---
+- name: Install packages
+  import_tasks: pkgs.yaml
+
 - name: Configure slapd install settings
   become: true
   ansible.builtin.debconf:

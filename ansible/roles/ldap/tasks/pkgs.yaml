@@ -1,0 +1,10 @@
+---
+- name: Install ubuntu acl package
+  become: true
+  apt:
+    name: acl
+
+- name: Install step-cli
+  become: true
+  apt:
+    deb: "{{ step_url }}"

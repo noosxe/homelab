@@ -1,4 +1,6 @@
 ---
+step_url: https://dl.step.sm/gh-release/cli/docs-ca-install/v0.21.0/step-cli_0.21.0_amd64.deb
+
 openldap_org: noosxe
 openldap_tld: com
 openldap_domain_name: "{{ openldap_org + '.' + openldap_tld }}"
