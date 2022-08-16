@@ -1,0 +1,9 @@
+---
+- name: Install root certificate
+  command: step ca bootstrap --install --force --ca-url={{ tiny_ca_url }} --fingerprint={{ root_fingerprint }}
+
+- name: Install certbot
+  become: true
+  snap:
+    classic: true
+    name: certbot
