@@ -1,0 +1,7 @@
+---
+- name: Allow ldap
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: OpenLDAP LDAPS
+    src: 192.168.10.0/24
