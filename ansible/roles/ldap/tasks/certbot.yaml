@@ -1,5 +1,6 @@
 ---
 - name: Install root certificate
+  become: true
   command: step ca bootstrap --install --force --ca-url={{ tiny_ca_url }} --fingerprint={{ root_fingerprint }}
 
 - name: Install certbot
@@ -7,3 +8,21 @@
   snap:
     classic: true
     name: certbot
+
+- name: Stop and disable snap.certbot.renew.timer
+  become: true
+  ansible.builtin.systemd:
+    name: snap.certbot.renew.timer
+    state: stopped
+    enabled: no
+
+- name: Stop and disable snap.certbot.renew.service
+  become: true
+  ansible.builtin.systemd:
+    name: snap.certbot.renew.service
+    state: stopped
+    enabled: no
+
+- name: Fetch the certs
+  become: true
+  raw: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot certonly -n --standalone --agree-tos --email kirlevon@gmail.com -d ldap.servo.local --server {{ tiny_ca_acme }}
