@@ -26,3 +26,17 @@
 - name: Fetch the certs
   become: true
   raw: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot certonly -n --standalone --agree-tos --email kirlevon@gmail.com -d ldap.servo.local --server {{ tiny_ca_acme }}
+
+- name: Replace the renewal before expiry time
+  become: true
+  lineinfile:
+    path: /etc/letsencrypt/renewal/ldap.servo.local.conf
+    regexp: "renew_before_expiry ="
+    line: renew_before_expiry = 8 hours
+
+- name: Configure cron job to renew certs
+  become: true
+  cron:
+    name: renew certs
+    minute: "*/15"
+    job: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot -q renew
