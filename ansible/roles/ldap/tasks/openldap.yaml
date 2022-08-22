@@ -35,3 +35,34 @@
     name:
       - slapd
       - ldap-utils
+
+- name: Add openldap user to ssl-cert group
+  become: true
+  user:
+    name: openldap
+    groups: ssl-cert
+    append: yes
+
+- name: Allow ldaps:///
+  become: true
+  lineinfile:
+    path: /etc/default/slapd
+    regexp: "SLAPD_SERVICES="
+    line: SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"
+
+- name: Restart slapd
+  become: true
+  systemd:
+    name: slapd
+    state: restarted
+
+- name: Place ssl config ldif
+  become: true
+  template:
+    src: ssl.ldif.j2
+    dest: /root/ssl.ldif
+    mode: "0644"
+
+- name: Run slapmodify to configure ssl support
+  become: true
+  command: ldapmodify -H ldapi:// -Y EXTERNAL -f /root/ssl.ldif

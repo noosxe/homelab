@@ -4,6 +4,11 @@
   apt:
     name: acl
 
+- name: Install ssl-cert
+  become: true
+  apt:
+    name: ssl-cert
+
 - name: Install step-cli
   become: true
   apt:
