@@ -34,9 +34,20 @@
     regexp: "renew_before_expiry ="
     line: renew_before_expiry = 8 hours
 
+- name: Install certs configurator script
+  become: true
+  template:
+    src: certs.sh.j2
+    dest: /usr/local/bin/renew.sh
+    mode: "0744"
+
+- name: Run the certs configurator
+  become: true
+  command: /usr/local/bin/renew.sh
+
 - name: Configure cron job to renew certs
   become: true
   cron:
     name: renew certs
     minute: "*/15"
-    job: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot -q renew
+    job: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot -q renew --renew-hook /usr/local/bin/renew.sh
