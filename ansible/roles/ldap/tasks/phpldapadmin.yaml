@@ -1,0 +1,35 @@
+---
+- name: Disable default apache2 site
+  become: true
+  command: a2dissite 000-default.conf
+
+- name: Install apache2 ports.conf
+  become: true
+  template:
+    src: ports.conf.j2
+    dest: /etc/apache2/ports.conf
+    mode: "0644"
+
+- name: Install phpldapadmin apache.conf
+  become: true
+  template:
+    src: apache.conf.j2
+    dest: /etc/phpldapadmin/apache.conf
+    mode: "0644"
+
+- name: Enable apache2 ssl
+  become: true
+  command: a2enmod ssl
+
+- name: Start apache2
+  become: true
+  systemd:
+    name: apache2
+    state: restarted
+
+- name: Install phpldapadmin config.php
+  become: true
+  template:
+    src: config.php.j2
+    dest: /etc/phpldapadmin/config.php
+    mode: "0640"

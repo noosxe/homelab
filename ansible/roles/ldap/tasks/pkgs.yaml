@@ -13,3 +13,8 @@
   become: true
   apt:
     deb: "{{ step_url }}"
+
+- name: Install phpldapadmin
+  become: true
+  apt:
+    name: phpldapadmin

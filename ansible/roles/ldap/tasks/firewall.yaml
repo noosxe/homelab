@@ -5,3 +5,10 @@
     rule: allow
     name: OpenLDAP LDAPS
     src: 192.168.10.0/24
+
+- name: Allow Apache Secure
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: Apache Secure
+    src: 192.168.10.0/24

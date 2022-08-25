@@ -1,0 +1,5 @@
+#!/bin/sh
+
+systemctl stop apache2
+REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot -q renew --renew-hook /usr/local/bin/renew.sh
+systemctl start apache2

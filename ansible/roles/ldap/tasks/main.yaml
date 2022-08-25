@@ -11,5 +11,8 @@
 - name: Setup openldap
   import_tasks: openldap.yaml
 
+- name: Setup phpldapadmin
+  import_tasks: phpldapadmin.yaml
+
 - name: Setup firewall
   import_tasks: firewall.yaml
