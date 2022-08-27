@@ -63,4 +63,4 @@
   cron:
     name: renew certs
     minute: "*/15"
-    job: /usr/local/bin/certbot.sh
+    job: /usr/local/bin/certbot.sh 2>&1 | /usr/bin/logger -t CRONOUTPUT
