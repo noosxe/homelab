@@ -1,14 +1,21 @@
 ---
-- name: Allow ldap
+- name: Allow ldaps
   become: true
   community.general.ufw:
     rule: allow
-    name: OpenLDAP LDAPS
+    port: "636"
     src: 192.168.10.0/24
 
-- name: Allow Apache Secure
+- name: Allow HTTP
   become: true
   community.general.ufw:
     rule: allow
-    name: Apache Secure
+    port: "80"
+    src: 192.168.10.0/24
+
+- name: Allow HTTPS
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "443"
     src: 192.168.10.0/24
