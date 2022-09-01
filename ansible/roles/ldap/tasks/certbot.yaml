@@ -50,6 +50,7 @@
 - name: Run the certs configurator
   become: true
   command: /usr/local/bin/renew.sh
+  ignore_errors: true
 
 - name: Install the certbot renewal script
   become: true
