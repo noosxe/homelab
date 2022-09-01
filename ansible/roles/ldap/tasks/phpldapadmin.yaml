@@ -17,6 +17,12 @@
     dest: /etc/phpldapadmin/apache.conf
     mode: "0644"
 
+- name: Create logs dir
+  become: true
+  file:
+    path: /etc/apache2/logs
+    state: directory
+
 - name: Enable apache2 ssl
   become: true
   command: a2enmod ssl
