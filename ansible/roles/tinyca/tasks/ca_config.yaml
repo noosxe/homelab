@@ -31,15 +31,6 @@
     - "{{ stepca_output.stderr_lines }}"
   when: stepca_output.stdout_lines is defined and stepca_output.stderr_lines is defined
 
-- name: Add ACME provisioner
-  become: true
-  become_user: "{{ ca_user }}"
-  ansible.builtin.command:
-    cmd: step ca provisioner add acme --type acme --ca-config {{ ca_json }}
-  environment:
-    STEPPATH: "{{ ca_dir }}"
-  when: not ca_json_result.stat.exists
-
 - name: Copy files from the usb drive
   become: true
   become_user: "{{ ca_user }}"
@@ -70,6 +61,23 @@
   mount:
     path: "{{ ca_usb_dir }}"
     state: unmounted
+
+- name: Start step CA
+  become: true
+  systemd:
+    name: step-ca
+    daemon-reload: yes
+    enabled: yes
+    state: restarted
+
+- name: Add ACME provisioner
+  become: true
+  become_user: "{{ ca_user }}"
+  ansible.builtin.command:
+    cmd: step ca provisioner add acme --type acme --ca-config {{ ca_json }}
+  environment:
+    STEPPATH: "{{ ca_dir }}"
+  when: not ca_json_result.stat.exists
 
 - name: Start step CA
   become: true

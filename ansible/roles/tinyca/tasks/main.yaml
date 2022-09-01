@@ -8,11 +8,11 @@
 - name: Install udev rules
   import_tasks: udev.yaml
 
-- name: Setup systemd step-ca unit
-  import_tasks: systemd.yaml
-
 - name: Setup step-ca service environment
   import_tasks: service_env.yaml
+
+- name: Setup systemd step-ca unit
+  import_tasks: systemd.yaml
 
 - name: Setup CA certs and keys
   import_tasks: keys_certs.yaml
