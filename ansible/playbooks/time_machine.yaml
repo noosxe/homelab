@@ -3,6 +3,7 @@
   roles:
     - role: proxmox_base
       vms: "{{ groups['time_machine'] | map('extract',hostvars) | list }}"
+      when: time_machine_full is defined
 
 - name: Time machine
   hosts: time_machine
