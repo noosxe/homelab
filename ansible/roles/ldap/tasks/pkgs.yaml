@@ -4,16 +4,6 @@
   apt:
     name: acl
 
-- name: Install ssl-cert
-  become: true
-  apt:
-    name: ssl-cert
-
-- name: Install step-cli
-  become: true
-  apt:
-    deb: "{{ step_url }}"
-
 - name: Install phpldapadmin
   become: true
   apt:

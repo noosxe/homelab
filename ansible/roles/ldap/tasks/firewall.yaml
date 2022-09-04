@@ -1,4 +1,11 @@
 ---
+- name: Allow ldap
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "389"
+    src: 192.168.10.0/24
+
 - name: Allow ldaps
   become: true
   community.general.ufw:

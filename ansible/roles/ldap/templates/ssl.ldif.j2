@@ -1,6 +1,14 @@
 dn: cn=config
 changetype: modify
-
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: NORMAL
+-
+replace: olcTLSCRLCheck
+olcTLSCRLCheck: none
+-
+replace: olcTLSVerifyClient
+olcTLSVerifyClient: never
+-
 replace: olcTLSCACertificateFile
 olcTLSCACertificateFile: /etc/ssl/certs/{{ ldap_hostname }}.fullchain.pem
 -
@@ -9,3 +17,6 @@ olcTLSCertificateFile: /etc/ssl/certs/{{ ldap_hostname }}.cert.pem
 -
 replace: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/ssl/private/{{ ldap_hostname }}.privkey.pem
+-
+replace: olcTLSProtocolMin
+olcTLSProtocolMin: 3.3
