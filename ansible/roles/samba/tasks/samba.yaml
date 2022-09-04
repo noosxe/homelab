@@ -1,0 +1,20 @@
+---
+- name: Install Samba packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - samba
+      - samba-common
+    state: present
+
+- name: Install smb.conf
+  become: true
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+- name: Configure Samba service
+  become: true
+  service:
+    name: smbd
+    state: started
+    enabled: true

@@ -1,0 +1,16 @@
+---
+- name: Create nfs mount dir
+  become: true
+  ansible.builtin.file:
+    path: /mnt/time_machine
+    state: directory
+    mode: "0755"
+
+- name: Mount time machine nfs share
+  become: true
+  ansible.posix.mount:
+    src: 192.168.10.58:/mnt/store/time-machine
+    path: /mnt/time_machine
+    opts: rw,sync,hard,intr,tcp,nofail,noatime,nolock
+    state: mounted
+    fstype: nfs
