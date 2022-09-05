@@ -9,4 +9,5 @@
   hosts: tinyca
   roles:
     - basic_vm
+    - docker
     - tinyca
