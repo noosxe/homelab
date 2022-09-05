@@ -1,0 +1,12 @@
+- name: Dockerhost Proxmox
+  hosts: proxmox
+  roles:
+    - role: proxmox_base
+      vms: "{{ groups['dockerhost'] | map('extract',hostvars) | list }}"
+      when: dockerhost_full is defined
+
+- name: Dockerhost
+  hosts: dockerhost
+  roles:
+    - basic_vm
+    - docker
