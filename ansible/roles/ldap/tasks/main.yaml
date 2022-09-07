@@ -2,10 +2,6 @@
 - name: Include secrets
   include_vars: ../../../secrets.yaml
 
-- name: Setup tinyca root certificate
-  include_role:
-    name: tinyca_client
-
 - name: Install packages
   import_tasks: pkgs.yaml
 
