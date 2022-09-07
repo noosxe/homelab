@@ -1,0 +1,16 @@
+---
+- name: Create the mount dir
+  become: true
+  file:
+    path: "{{ dest }}"
+    state: directory
+    mode: "0755"
+
+- name: Mount the nfs share
+  become: true
+  mount:
+    src: "{{ src }}"
+    path: "{{ dest }}"
+    opts: rw,sync,hard,intr,tcp,nofail,noatime,nolock
+    state: mounted
+    fstype: nfs

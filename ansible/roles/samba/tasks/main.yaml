@@ -1,10 +1,3 @@
 ---
-- name: Setup tinyca root certificate
-  include_role:
-    name: tinyca_client
-
-- name: Configure nfs share
-  import_tasks: nfs.yaml
-
 - name: Configure samba
   import_tasks: samba.yaml
