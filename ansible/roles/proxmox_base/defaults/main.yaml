@@ -4,7 +4,7 @@ pv_host: servo
 pv_token_id: ansible
 pv_token_secret: "{{ undef(hint='You must specify pv_token_secret') }}"
 
-cloudimg_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+cloudimg_url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
 cloudimg_file: /home/noosxe/cloudimg.img
 
 cvm:
