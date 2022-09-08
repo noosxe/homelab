@@ -1,10 +1,17 @@
 ---
+- name: Stat the mount dir
+  become: true
+  stat:
+    path: "{{ dest }}"
+  register: dest_dir
+
 - name: Create the mount dir
   become: true
   file:
     path: "{{ dest }}"
     state: directory
     mode: "0755"
+  when: not dest_dir.stat.exists
 
 - name: Mount the nfs share
   become: true
