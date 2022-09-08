@@ -24,6 +24,22 @@
       compression: true
       sharenfs: "rw=@192.168.10.101"
 
+- name: Ensure group capsuleshares exists
+  become: true
+  become_method: su
+  group:
+    name: capsuleshares
+    gid: 5000
+    state: present
+
+- name: Change the time-machine directory group
+  become: true
+  become_method: su
+  file:
+    path: /mnt/store/time-machine
+    group: capsuleshares
+    mode: "0775"
+
 - name: Download ubuntu cloudimg
   ansible.builtin.get_url:
     url: "{{ cloudimg_url }}"

@@ -1,20 +1,67 @@
 ---
-- name: Install Samba packages
+- name: Ensure group capsuleshares exists
   become: true
-  ansible.builtin.apt:
-    name:
-      - samba
-      - samba-common
+  group:
+    name: capsuleshares
+    gid: 5000
     state: present
+
+- name: Add share manager
+  become: true
+  user:
+    name: sharemanager
+    group: capsuleshares
+    shell: /bin/bash
+    create_home: no
+    system: false
+    uid: 5000
+
+- name: Add share users
+  become: true
+  user:
+    name: "{{ item.name }}"
+    group: capsuleshares
+    shell: /bin/bash
+    create_home: no
+    system: false
+    uid: "{{ item.uid }}"
+  loop: "{{ users }}"
+
+- name: Create share directories
+  become: true
+  become_user: "{{ item.name }}"
+  file:
+    path: "{{share_root}}/{{ item.name }}"
+    state: directory
+    mode: "0700"
+    owner: "{{ item.name }}"
+    group: capsuleshares
+  loop: "{{ users }}"
 
 - name: Install smb.conf
   become: true
   template:
     src: smb.conf.j2
     dest: /etc/samba/smb.conf
-- name: Configure Samba service
+  notify: Restart smbd service
+
+- name: Install timemachine.service
   become: true
-  service:
-    name: smbd
-    state: started
-    enabled: true
+  template:
+    src: timemachine.service.j2
+    dest: /etc/avahi/services/timemachine.service
+  notify: Restart avahi-daemon service
+
+- name: Allow samba
+  become: true
+  ufw:
+    rule: allow
+    port: "{{ smb_ports }}"
+    src: 192.168.10.0/24
+
+- name: Allow avahi-daemon
+  become: true
+  ufw:
+    rule: allow
+    port: 5353
+    src: 192.168.10.0/24

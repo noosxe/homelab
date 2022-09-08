@@ -1,0 +1,6 @@
+---
+workgroup: WORKGROUP
+netbios_name: CHANGEME
+security: user
+passdb_backend: tdbsam
+smb_ports: 445

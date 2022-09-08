@@ -1,0 +1,13 @@
+---
+- name: Install ubuntu acl package
+  become: true
+  apt:
+    name: acl
+
+- name: Install Samba packages
+  become: true
+  apt:
+    name:
+      - samba
+      - samba-common
+      - avahi-daemon

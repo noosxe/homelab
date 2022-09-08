@@ -1,0 +1,51 @@
+[global]
+workgroup               = {{ workgroup }}
+netbios name            = {{ netbios_name }}
+security                = {{ security }}
+passdb backend          = {{ passdb_backend }}
+smb ports               = {{ smb_ports }}
+
+server role             = standalone
+server services         = -dns, -nbt
+load printers           = no
+printcap name           = /dev/null
+disable spoolss         = yes
+disable netbios         = yes
+
+ea support                  = yes
+fruit:aapl                  = yes
+fruit:advertise_fullsync    = true
+fruit:time machine          = yes
+fruit:metadata              = stream
+fruit:wipe_intentionally_left_blank_rfork = yes
+fruit:delete_empty_adfiles                = yes
+fruit:resource              = xattr
+map acl inherit             = yes
+smb2 leases                 = yes
+vfs objects                 = catia fruit streams_xattr
+spotlight                   = yes
+
+# Security
+client ipc max protocol = default
+client max protocol     = default
+server max protocol     = SMB3
+client ipc min protocol = default
+client min protocol     = CORE
+server min protocol     = SMB2
+
+{% for user in users %}
+[{{ user.name }}]
+comment                       = Apple TimeMachine Backup Target
+path                          = {{share_root}}/{{ user.name }}
+valid users                   = {{ user.name }}
+browseable                    = yes
+writable                      = yes
+create mask                   = 0600
+directory mask                = 0700
+spotlight                     = yes
+vfs objects                   = catia fruit streams_xattr
+fruit:aapl                    = yes
+fruit:time machine            = yes
+fruit:time machine max size   = {{ user.quota }}
+
+{% endfor %}
