@@ -18,3 +18,4 @@
       vars:
         share_root: /mnt/time_machine
         netbios_name: CAPSULE
+    - nebula
