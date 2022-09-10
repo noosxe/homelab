@@ -1,0 +1,6 @@
+- name: Restart the nebula service
+  systemd:
+    name: nebula
+    daemon_reload: yes
+    enabled: yes
+    state: restarted

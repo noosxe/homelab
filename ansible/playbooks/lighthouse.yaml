@@ -1,0 +1,4 @@
+- name: Setup nebula lighthouse node
+  hosts: lighthouse
+  roles:
+    - lighthouse
