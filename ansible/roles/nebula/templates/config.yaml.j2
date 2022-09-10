@@ -104,3 +104,14 @@ firewall:
     - port: any
       proto: icmp
       host: any
+
+{% if inbound_rules is defined %}
+{% for rule in inbound_rules %}
+    - port: {{ rule.port }}
+      proto: {{ rule.proto }}
+      groups:
+{% for group in rule.groups %}
+        - {{ group }}
+{% endfor %}
+{% endfor %}
+{% endif %}
