@@ -5,6 +5,18 @@
       vms: "{{ groups['time_machine'] | map('extract',hostvars) | list }}"
       when: time_machine_full is defined
 
+- name: Time machine NFS server
+  hosts: proxmox
+  roles:
+    - role: nfs_server
+      vars:
+        path: store/time-machine
+        sharenfs: "rw=@192.168.10.101"
+        group:
+          name: capsuleshares
+          gid: 5000
+      when: shares_full is defined
+
 - name: Time machine
   hosts: time_machine
   roles:
@@ -18,4 +30,7 @@
       vars:
         share_root: /mnt/time_machine
         netbios_name: CAPSULE
+        group:
+          name: capsuleshares
+          gid: 5000
     - nebula

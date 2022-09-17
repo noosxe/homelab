@@ -1,0 +1,7 @@
+---
+- name: Install NFS server package
+  become: true
+  become_method: su
+  apt:
+    name: nfs-kernel-server
+    state: present

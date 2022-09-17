@@ -1,0 +1,34 @@
+---
+- name: Enable and start NFS server
+  become: true
+  become_method: su
+  service:
+    name: nfs-kernel-server.service
+    state: started
+    enabled: true
+
+- name: Configure time-machine zfs filesystem
+  become: true
+  become_method: su
+  zfs:
+    name: "{{ path }}"
+    state: present
+    extra_zfs_properties:
+      compression: true
+      sharenfs: "{{ sharenfs }}"
+
+- name: Ensure group exists
+  become: true
+  become_method: su
+  group:
+    name: "{{ group.name }}"
+    gid: "{{ group.gid }}"
+    state: present
+
+- name: Change the share directory group
+  become: true
+  become_method: su
+  file:
+    path: "/mnt/{{ path }}"
+    group: "{{ group.name }}"
+    mode: "0775"
