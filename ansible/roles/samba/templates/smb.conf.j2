@@ -46,6 +46,8 @@ spotlight                     = yes
 vfs objects                   = catia fruit streams_xattr
 fruit:aapl                    = yes
 fruit:time machine            = yes
+{% if user.quota is defined  %}
 fruit:time machine max size   = {{ user.quota }}
+{% endif %}
 
 {% endfor %}
