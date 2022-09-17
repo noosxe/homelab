@@ -1,16 +1,16 @@
 ---
-- name: Ensure group capsuleshares exists
+- name: Ensure group exists
   become: true
   group:
-    name: capsuleshares
-    gid: 5000
+    name: "{{ group.name }}"
+    gid: "{{ group.gid }}"
     state: present
 
 - name: Add share manager
   become: true
   user:
     name: sharemanager
-    group: capsuleshares
+    group: "{{ group.name }}"
     shell: /bin/bash
     create_home: no
     system: false
@@ -20,7 +20,7 @@
   become: true
   user:
     name: "{{ item.name }}"
-    group: capsuleshares
+    group: "{{ group.name }}"
     shell: /bin/bash
     create_home: no
     system: false
@@ -35,7 +35,7 @@
     state: directory
     mode: "0700"
     owner: "{{ item.name }}"
-    group: capsuleshares
+    group: "{{ group.name }}"
   loop: "{{ users }}"
 
 - name: Install smb.conf
@@ -52,16 +52,32 @@
     dest: /etc/avahi/services/timemachine.service
   notify: Restart avahi-daemon service
 
-- name: Allow samba
+- name: Allow samba from mesh
+  become: true
+  ufw:
+    rule: allow
+    port: "{{ smb_ports }}"
+    src: 192.168.150.0/24
+
+- name: Allow avahi-daemon from mesh
+  become: true
+  ufw:
+    rule: allow
+    port: 5353
+    proto: udp
+    src: 192.168.150.0/24
+
+- name: Allow samba locally
   become: true
   ufw:
     rule: allow
     port: "{{ smb_ports }}"
     src: 192.168.10.0/24
 
-- name: Allow avahi-daemon
+- name: Allow avahi-daemon locally
   become: true
   ufw:
     rule: allow
     port: 5353
+    proto: udp
     src: 192.168.10.0/24
