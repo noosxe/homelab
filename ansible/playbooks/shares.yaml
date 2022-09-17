@@ -1,0 +1,35 @@
+- name: Shares Proxmox
+  hosts: proxmox
+  roles:
+    - role: proxmox_base
+      vms: "{{ groups['shares'] | map('extract',hostvars) | list }}"
+      when: shares_full is defined
+
+- name: Shares NFS server
+  hosts: proxmox
+  roles:
+    - role: nfs_server
+      vars:
+        path: store/media
+        sharenfs: "rw=@192.168.10.102"
+        group:
+          name: shares
+          gid: 6000
+      when: shares_full is defined
+
+- name: Shares
+  hosts: shares
+  roles:
+    - basic_vm
+    - tinyca_client
+    - role: nfs_client
+      vars:
+        src: 192.168.10.58:/mnt/store/media
+        dest: /mnt/media
+    - role: samba
+      vars:
+        share_root: /mnt/media
+        netbios_name: SHARES
+        group:
+          name: shares
+          gid: 6000
