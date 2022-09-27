@@ -1,5 +1,5 @@
-[proxmox]
-192.168.1.10
-
-; [proxmox:vars]
-; pv_token_secret=please define me
+proxmox:
+  hosts:
+    192.168.1.10:
+  vars:
+    pv_token_secret: please define me
