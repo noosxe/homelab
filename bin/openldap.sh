@@ -13,7 +13,7 @@ while getopts ${optstring} arg; do
 done
 
 if [ $f -eq 1 ]; then
-  ansible-playbook playbooks/time_machine.yaml -K --extra-vars "time_machine_full=yes"
+  ansible-playbook ./ansible/playbooks/ldap.yaml -K --extra-vars "openldap_full=yes"
 else
-  ansible-playbook playbooks/time_machine.yaml
+  ansible-playbook ./ansible/playbooks/ldap.yaml
 fi

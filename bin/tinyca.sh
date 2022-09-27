@@ -13,7 +13,7 @@ while getopts ${optstring} arg; do
 done
 
 if [ $f -eq 1 ]; then
-  ansible-playbook playbooks/shares.yaml -K --extra-vars "shares_full=yes"
+  ansible-playbook ./ansible/playbooks/tinyca.yaml -K --extra-vars "tinyca_full=yes"
 else
-  ansible-playbook playbooks/shares.yaml
+  ansible-playbook ./ansible/playbooks/tinyca.yaml
 fi

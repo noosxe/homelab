@@ -13,7 +13,7 @@ while getopts ${optstring} arg; do
 done
 
 if [ $f -eq 1 ]; then
-  ansible-playbook playbooks/tinyca.yaml -K --extra-vars "tinyca_full=yes"
+  ansible-playbook ./ansible/playbooks/time_machine.yaml -K --extra-vars "time_machine_full=yes"
 else
-  ansible-playbook playbooks/tinyca.yaml
+  ansible-playbook ./ansible/playbooks/time_machine.yaml
 fi

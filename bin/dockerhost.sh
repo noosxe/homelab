@@ -13,7 +13,7 @@ while getopts ${optstring} arg; do
 done
 
 if [ $f -eq 1 ]; then
-  ansible-playbook playbooks/ldap.yaml -K --extra-vars "openldap_full=yes"
+  ansible-playbook ./ansible/playbooks/dockerhost.yaml -K --extra-vars "dockerhost_full=yes"
 else
-  ansible-playbook playbooks/ldap.yaml
+  ansible-playbook ./ansible/playbooks/dockerhost.yaml
 fi
