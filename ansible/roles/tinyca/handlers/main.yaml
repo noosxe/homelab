@@ -1,12 +1,12 @@
 ---
 - name: Start step CA
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: step-ca
-    daemon-reload: yes
-    enabled: yes
+    daemon-reload: true
+    enabled: true
     state: restarted
 
 - name: Reload udevadm
   become: true
-  shell: udevadm control --reload-rules
+  ansible.builtin.command: udevadm control --reload-rules

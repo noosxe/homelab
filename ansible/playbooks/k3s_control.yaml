@@ -1,10 +1,10 @@
-- name: k3s control Proxmox
+- name: K3s control Proxmox
   hosts: proxmox
   roles:
     - role: proxmox_base
       vms: "{{ groups['k3s_control'] | map('extract',hostvars) | list }}"
 
-- name: k3s control
+- name: K3s control
   hosts: k3s_control
   roles:
     - basic_vm

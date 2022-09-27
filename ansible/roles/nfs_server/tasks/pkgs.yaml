@@ -2,6 +2,6 @@
 - name: Install NFS server package
   become: true
   become_method: su
-  apt:
+  ansible.builtin.apt:
     name: nfs-kernel-server
     state: present

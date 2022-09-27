@@ -1,28 +1,28 @@
 ---
 - name: Ensure group exists
   become: true
-  group:
+  ansible.builtin.group:
     name: "{{ group.name }}"
     gid: "{{ group.gid }}"
     state: present
 
 - name: Add share manager
   become: true
-  user:
+  ansible.builtin.user:
     name: sharemanager
     group: "{{ group.name }}"
     shell: /bin/bash
-    create_home: no
+    create_home: false
     system: false
     uid: 5000
 
 - name: Add share users
   become: true
-  user:
+  ansible.builtin.user:
     name: "{{ item.name }}"
     group: "{{ group.name }}"
     shell: /bin/bash
-    create_home: no
+    create_home: false
     system: false
     uid: "{{ item.uid }}"
   loop: "{{ users }}"
@@ -30,8 +30,8 @@
 - name: Create share directories
   become: true
   become_user: "{{ item.name }}"
-  file:
-    path: "{{share_root}}/{{ item.name }}"
+  ansible.builtin.file:
+    path: "{{ share_root }}/{{ item.name }}"
     state: directory
     mode: "0700"
     owner: "{{ item.name }}"
@@ -40,28 +40,28 @@
 
 - name: Install smb.conf
   become: true
-  template:
+  ansible.builtin.template:
     src: smb.conf.j2
     dest: /etc/samba/smb.conf
   notify: Restart smbd service
 
 - name: Install timemachine.service
   become: true
-  template:
+  ansible.builtin.template:
     src: timemachine.service.j2
     dest: /etc/avahi/services/timemachine.service
   notify: Restart avahi-daemon service
 
 - name: Allow samba from mesh
   become: true
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ smb_ports }}"
     src: 192.168.150.0/24
 
 - name: Allow avahi-daemon from mesh
   become: true
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 5353
     proto: udp
@@ -69,14 +69,14 @@
 
 - name: Allow samba locally
   become: true
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ smb_ports }}"
     src: 192.168.10.0/24
 
 - name: Allow avahi-daemon locally
   become: true
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 5353
     proto: udp

@@ -9,7 +9,7 @@
     name: proxmoxer==1.3.1
 
 - name: Create cloud vm template
-  proxmox_kvm:
+  community.general.proxmox_kvm:
     api_host: "{{ pv_host }}"
     api_user: "{{ pv_user }}"
     api_token_id: "{{ pv_token_id }}"
@@ -19,9 +19,9 @@
     cores: "{{ cvm.cores }}"
     memory: "{{ cvm.memory }}"
     vmid: "{{ cvm.id }}"
-    localtime: no
-    agent: yes
-    onboot: yes
+    localtime: false
+    agent: true
+    onboot: true
     net:
       net0: "virtio,bridge=vmbr0"
   register: template_vm_result
@@ -85,13 +85,13 @@
       ipconfig0: "ip={{ item.inventory_hostname }}/24,gw={{ item.gw }}"
     sshkeys: "{{ lookup('file', item.sshkeyfile) }}"
 
-    update: yes
+    update: true
   loop: "{{ vms }}"
 
 - name: Configure disk size for vms
   become: true
   become_method: su
-  command: /usr/sbin/qm resize {{ item.id }} scsi0 {{ item.disk }}
+  ansible.builtin.command: /usr/sbin/qm resize {{ item.id }} scsi0 {{ item.disk }}
   loop: "{{ vms }}"
   when: item.disk is defined
 
@@ -99,9 +99,9 @@
   become: true
   become_method: su
   ansible.builtin.command:
-    cmd: /usr/sbin/qm set "{{ item[0].id }}" -"{{ item[1].name }}" host="{{ item[1].host }},usb3=yes"
+    cmd: /usr/sbin/qm set "{{ item[0].id }}" -"{{ item[1].name }}" host="{{ item[1].host }},usb3=true"
   loop: "{{ vms | subelements('usb_devices') }}"
-  when: item[0].usb_devices is defined and (item[0].usb_devices|length > 0)
+  when: item[0].usb_devices is defined and (item[0].usb_devices | length > 0)
   ignore_errors: true
 
 - name: Start VMs
@@ -113,11 +113,11 @@
     node: "{{ pv_host }}"
     vmid: "{{ item.id }}"
     state: started
-    update: yes
+    update: true
   register: wait
   loop: "{{ vms }}"
 
 - name: Waiting for the VM to start
-  wait_for:
+  ansible.builtin.wait_for:
     timeout: 45
-  when: wait.changed == true
+  when: wait.changed is true

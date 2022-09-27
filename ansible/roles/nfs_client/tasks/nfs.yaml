@@ -1,13 +1,13 @@
 ---
 - name: Stat the mount dir
   become: true
-  stat:
+  ansible.builtin.stat:
     path: "{{ dest }}"
   register: dest_dir
 
 - name: Create the mount dir
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ dest }}"
     state: directory
     mode: "0755"
@@ -15,7 +15,7 @@
 
 - name: Mount the nfs share
   become: true
-  mount:
+  ansible.posix.mount:
     src: "{{ src }}"
     path: "{{ dest }}"
     opts: rw,sync,hard,intr,tcp,nofail,noatime,nolock

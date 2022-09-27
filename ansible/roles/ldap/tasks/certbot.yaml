@@ -1,7 +1,7 @@
 ---
 - name: Install certbot
   become: true
-  snap:
+  ansible.builtin.snap:
     classic: true
     name: certbot
 
@@ -10,54 +10,56 @@
   ansible.builtin.systemd:
     name: snap.certbot.renew.timer
     state: stopped
-    enabled: no
+    enabled: false
 
 - name: Stop and disable snap.certbot.renew.service
   become: true
   ansible.builtin.systemd:
     name: snap.certbot.renew.service
     state: stopped
-    enabled: no
+    enabled: false
 
 - name: Stop apache2
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: apache2
     state: stopped
 
 - name: Fetch the certs
   become: true
-  raw: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt certbot certonly -n --standalone --agree-tos --email kirlevon@gmail.com -d ldap.servo.local --server {{ tiny_ca_acme }}
+  ansible.builtin.raw: REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt
+    certbot certonly -n --standalone --agree-tos
+    --email kirlevon@gmail.com -d ldap.servo.local --server {{ tiny_ca_acme }}
 
 - name: Replace the renewal before expiry time
   become: true
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/letsencrypt/renewal/ldap.servo.local.conf
     regexp: "renew_before_expiry ="
     line: renew_before_expiry = 8 hours
 
 - name: Install certs configurator script
   become: true
-  template:
+  ansible.builtin.template:
     src: certs.sh.j2
     dest: /usr/local/bin/renew.sh
     mode: "0744"
 
 - name: Run the certs configurator
   become: true
-  command: /usr/local/bin/renew.sh
+  ansible.builtin.command: /usr/local/bin/renew.sh
   ignore_errors: true
 
 - name: Install the certbot renewal script
   become: true
-  template:
+  ansible.builtin.template:
     src: certbot.sh.j2
     dest: /usr/local/bin/certbot.sh
     mode: "0744"
 
 - name: Configure cron job to renew certs
   become: true
-  cron:
+  ansible.builtin.cron:
     name: renew certs
     minute: "*/15"
     job: /usr/local/bin/certbot.sh 2>&1 | /usr/bin/logger -t CRONOUTPUT

@@ -38,31 +38,31 @@
 
 - name: Add openldap user to ssl-cert group
   become: true
-  user:
+  ansible.builtin.user:
     name: openldap
     groups: ssl-cert
-    append: yes
+    append: true
 
 - name: Allow ldaps:///
   become: true
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/default/slapd
     regexp: "SLAPD_SERVICES="
     line: SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"
 
 - name: Restart slapd
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: slapd
     state: restarted
 
 - name: Place ssl config ldif
   become: true
-  template:
+  ansible.builtin.template:
     src: ssl.ldif.j2
     dest: /root/ssl.ldif
     mode: "0644"
 
 - name: Run slapmodify to configure ssl support
   become: true
-  command: ldapmodify -H ldapi:// -Y EXTERNAL -f /root/ssl.ldif
+  ansible.builtin.command: ldapmodify -H ldapi:// -Y EXTERNAL -f /root/ssl.ldif

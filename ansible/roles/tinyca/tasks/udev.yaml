@@ -1,15 +1,15 @@
 ---
 - name: Copy flashdrive udev rules
   become: true
-  template:
+  ansible.builtin.template:
     src: 76-flashdrive.rules.j2
     dest: /etc/udev/rules.d/76-flashdrive.rules
   notify: Reload udevadm
 
 - name: Trigger udevadm add action
   become: true
-  shell: udevadm trigger --action=add
+  ansible.builtin.command: udevadm trigger --action=add
 
 - name: Wait for /dev/flashdrive
-  wait_for:
+  ansible.builtin.wait_for:
     path: /dev/flashdrive

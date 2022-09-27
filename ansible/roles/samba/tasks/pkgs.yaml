@@ -1,12 +1,12 @@
 ---
 - name: Install ubuntu acl package
   become: true
-  apt:
+  ansible.builtin.apt:
     name: acl
 
 - name: Install Samba packages
   become: true
-  apt:
+  ansible.builtin.apt:
     name:
       - samba
       - samba-common

@@ -1,15 +1,15 @@
 ---
 - name: Install ubuntu acl package
   become: true
-  apt:
+  ansible.builtin.apt:
     name: acl
 
 - name: Install pip
   become: true
-  apt:
+  ansible.builtin.apt:
     name: python3-pip
 
 - name: Install step-cli
   become: true
-  apt:
+  ansible.builtin.apt:
     deb: "{{ step_url }}"

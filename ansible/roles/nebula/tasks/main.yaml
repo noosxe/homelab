@@ -1,34 +1,34 @@
 ---
 - name: Download nebula binaries
   become: true
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ nebula_url }}"
     dest: /usr/local/bin
-    remote_src: yes
+    remote_src: true
 
 - name: Create config directory
   become: true
-  file:
+  ansible.builtin.file:
     path: /etc/nebula
     state: directory
 
 - name: Copy the systemd service file
   become: true
-  template:
+  ansible.builtin.template:
     src: nebula.service.j2
     dest: /etc/systemd/system/nebula.service
   notify: Restart the nebula service
 
 - name: Copy config file
   become: true
-  template:
+  ansible.builtin.template:
     src: config.yaml.j2
     dest: /etc/nebula/config.yaml
   notify: Restart the nebula service
 
 - name: Allow access to udp port {{ nebula_port }}
   become: true
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ nebula_port }}"
     proto: udp

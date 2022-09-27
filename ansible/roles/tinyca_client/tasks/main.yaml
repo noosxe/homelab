@@ -1,10 +1,10 @@
 ---
 - name: Include secrets
-  include_vars: ../../../secrets.yaml
+  ansible.builtin.include_vars: ../../../secrets.yaml
 
 - name: Install packages
-  import_tasks: pkgs.yaml
+  ansible.builtin.import_tasks: pkgs.yaml
 
 - name: Install root certificate
   become: true
-  command: step ca bootstrap --install --force --ca-url={{ tiny_ca_url }} --fingerprint={{ root_fingerprint }}
+  ansible.builtin.command: step ca bootstrap --install --force --ca-url={{ tiny_ca_url }} --fingerprint={{ root_fingerprint }}

@@ -1,41 +1,41 @@
 ---
 - name: Disable default apache2 site
   become: true
-  command: a2dissite 000-default.conf
+  ansible.builtin.command: a2dissite 000-default.conf
 
 - name: Install apache2 ports.conf
   become: true
-  template:
+  ansible.builtin.template:
     src: ports.conf.j2
     dest: /etc/apache2/ports.conf
     mode: "0644"
 
 - name: Install phpldapadmin apache.conf
   become: true
-  template:
+  ansible.builtin.template:
     src: apache.conf.j2
     dest: /etc/phpldapadmin/apache.conf
     mode: "0644"
 
 - name: Create logs dir
   become: true
-  file:
+  ansible.builtin.file:
     path: /etc/apache2/logs
     state: directory
 
 - name: Enable apache2 ssl
   become: true
-  command: a2enmod ssl
+  ansible.builtin.command: a2enmod ssl
 
 - name: Start apache2
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: apache2
     state: restarted
 
 - name: Install phpldapadmin config.php
   become: true
-  template:
+  ansible.builtin.template:
     src: config.php.j2
     dest: /etc/phpldapadmin/config.php
     mode: "0640"

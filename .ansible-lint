@@ -1,0 +1,6 @@
+---
+skip_list:
+  - ignore-errors
+  - no-changed-when
+  - risky-file-permissions
+  - no-handler

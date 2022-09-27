@@ -1,18 +1,18 @@
 ---
 - name: Include secrets
-  include_vars: ../../../secrets.yaml
+  ansible.builtin.include_vars: ../../../secrets.yaml
 
 - name: Install packages
-  import_tasks: pkgs.yaml
+  ansible.builtin.import_tasks: pkgs.yaml
 
 - name: Setup firewall
-  import_tasks: firewall.yaml
+  ansible.builtin.import_tasks: firewall.yaml
 
 - name: Setup certbot
-  import_tasks: certbot.yaml
+  ansible.builtin.import_tasks: certbot.yaml
 
 - name: Setup openldap
-  import_tasks: openldap.yaml
+  ansible.builtin.import_tasks: openldap.yaml
 
 - name: Setup phpldapadmin
-  import_tasks: phpldapadmin.yaml
+  ansible.builtin.import_tasks: phpldapadmin.yaml

@@ -1,13 +1,13 @@
 ---
 - name: Unmount the flashdrive
   become: true
-  mount:
+  ansible.posix.mount:
     path: "{{ ca_usb_dir }}"
     state: unmounted
 
 - name: Mount the flashdrive
   become: true
-  mount:
+  ansible.posix.mount:
     src: /dev/flashdrive
     path: "{{ ca_usb_dir }}"
     fstype: vfat
@@ -30,7 +30,7 @@
   register: root_ca_key_result
 
 - name: Log root_ca_key state
-  debug:
+  ansible.builtin.debug:
     msg: "{{ root_ca_key_result.stat.exists }}"
 
 - name: Create the step-ca/usb/ca dir
@@ -53,7 +53,7 @@
   when: not root_ca_key_result.stat.exists
 
 - name: Display step ca init --pki output
-  debug:
+  ansible.builtin.debug:
     msg: "{{ item }}"
     verbosity: 2
   with_items:

@@ -6,7 +6,7 @@
     path: "{{ ca_json }}"
   register: ca_json_result
 
-- name: ca.json already exists
+- name: The ca.json already exists
   ansible.builtin.debug:
     msg: "Config already exists!"
   when: ca_json_result.stat.exists
@@ -15,7 +15,9 @@
   become: true
   become_user: "{{ ca_user }}"
   ansible.builtin.command:
-    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }} --address 0.0.0.0:443 --provisioner "{{ ca_provisioner }}" --password-file "{{ ca_dir }}/{{ password_file }}"
+    cmd: step ca init --name {{ ca_name }} --dns {{ ca_dns }}
+      --address 0.0.0.0:443 --provisioner "{{ ca_provisioner }}"
+      --password-file "{{ ca_dir }}/{{ password_file }}"
     creates: "{{ ca_json }}"
   environment:
     STEPPATH: "{{ ca_dir }}"
@@ -23,7 +25,7 @@
   when: not ca_json_result.stat.exists
 
 - name: Display step ca init output
-  debug:
+  ansible.builtin.debug:
     msg: "{{ item }}"
     verbosity: 2
   with_items:
@@ -34,40 +36,32 @@
 - name: Copy files from the usb drive
   become: true
   become_user: "{{ ca_user }}"
-  copy:
-    remote_src: yes
+  ansible.builtin.copy:
+    remote_src: true
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   loop:
-    - {
-        src: "{{ ca_usb_dir }}/ca/certs/intermediate_ca.crt",
-        dest: "{{ ca_dir }}/certs/intermediate_ca.crt",
-      }
-    - {
-        src: "{{ ca_usb_dir }}/ca/certs/root_ca.crt",
-        dest: "{{ ca_dir }}/certs/root_ca.crt",
-      }
-    - {
-        src: "{{ ca_usb_dir }}/ca/secrets/root_ca_key",
-        dest: "{{ ca_dir }}/secrets/root_ca_key",
-      }
-    - {
-        src: "{{ ca_usb_dir }}/ca/secrets/intermediate_ca_key",
-        dest: "{{ ca_dir }}/secrets/intermediate_ca_key",
-      }
+    - src: "{{ ca_usb_dir }}/ca/certs/intermediate_ca.crt"
+      dest: "{{ ca_dir }}/certs/intermediate_ca.crt"
+    - src: "{{ ca_usb_dir }}/ca/certs/root_ca.crt"
+      dest: "{{ ca_dir }}/certs/root_ca.crt"
+    - src: "{{ ca_usb_dir }}/ca/secrets/root_ca_key"
+      dest: "{{ ca_dir }}/secrets/root_ca_key"
+    - src: "{{ ca_usb_dir }}/ca/secrets/intermediate_ca_key"
+      dest: "{{ ca_dir }}/secrets/intermediate_ca_key"
 
 - name: Unmount the flashdrive
   become: true
-  mount:
+  ansible.posix.mount:
     path: "{{ ca_usb_dir }}"
     state: unmounted
 
 - name: Start step CA
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: step-ca
-    daemon-reload: yes
-    enabled: yes
+    daemon-reload: true
+    enabled: true
     state: restarted
 
 - name: Add ACME provisioner
@@ -81,8 +75,8 @@
 
 - name: Start step CA
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: step-ca
-    daemon-reload: yes
-    enabled: yes
+    daemon-reload: true
+    enabled: true
     state: restarted

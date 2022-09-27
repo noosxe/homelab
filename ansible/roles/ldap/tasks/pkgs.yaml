@@ -1,10 +1,10 @@
 ---
 - name: Install ubuntu acl package
   become: true
-  apt:
+  ansible.builtin.apt:
     name: acl
 
 - name: Install phpldapadmin
   become: true
-  apt:
+  ansible.builtin.apt:
     name: phpldapadmin
