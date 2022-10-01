@@ -1,0 +1,6 @@
+---
+- name: Install certbot
+  become: true
+  ansible.builtin.snap:
+    classic: true
+    name: certbot

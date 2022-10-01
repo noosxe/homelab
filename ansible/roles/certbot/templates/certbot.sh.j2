@@ -1,0 +1,3 @@
+#!/bin/sh
+
+REQUESTS_CA_BUNDLE=$(step path)/certs/root_ca.crt /snap/bin/certbot renew --renew-hook /usr/local/bin/cert_install.sh

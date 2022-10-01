@@ -1,0 +1,6 @@
+---
+- name: Install packages
+  ansible.builtin.import_tasks: pkgs.yaml
+
+- name: Setup certbot
+  ansible.builtin.import_tasks: certbot.yaml
