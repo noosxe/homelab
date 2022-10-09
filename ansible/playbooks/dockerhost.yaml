@@ -10,3 +10,4 @@
   roles:
     - basic_vm
     - docker
+    - portainer
