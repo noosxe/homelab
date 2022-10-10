@@ -4,10 +4,23 @@
     - role: proxmox_base
       vms: "{{ groups['dockerhost'] | map('extract',hostvars) | list }}"
       when: dockerhost_full is defined
+    - role: nfs_server
+      vars:
+        path: store/dockerhost
+        sharenfs: "rw=@192.168.10.105"
+        group:
+          name: dockerhost
+          gid: 7000
+      when: dockerhost_full is defined
 
 - name: Dockerhost
   hosts: dockerhost
   roles:
     - basic_vm
+    - tinyca_client
+    - role: nfs_client
+      vars:
+        src: 192.168.10.58:/mnt/store/dockerhost
+        dest: /mnt/data
     - docker
     - portainer
