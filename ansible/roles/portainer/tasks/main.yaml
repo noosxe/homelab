@@ -2,16 +2,36 @@
 - name: Install packages
   ansible.builtin.import_tasks: pkgs.yaml
 
+- name: Ensure the portainer group exists
+  become: true
+  ansible.builtin.group:
+    name: portainer
+    state: present
+    gid: "{{ gid }}"
+
+- name: Add the portainer user
+  become: true
+  ansible.builtin.user:
+    name: portainer
+    uid: "{{ uid }}"
+    group: portainer
+    groups: docker
+
 - name: Create a volume
   become: true
   community.docker.docker_volume:
     name: portainer_data
+    driver_options:
+      type: nfs
+      o: addr={{ nfs_share_host }},nolock,soft,rw
+      device: :{{ nfs_share_path }}
 
-- name: Create a data container'
+- name: Create the container
   become: true
   community.docker.docker_container:
     name: portainer
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.15.1-alpine
+    user: "{{ uid }}:{{ gid }}"
     ports:
       - 8000:8000
       - 9443:9443
