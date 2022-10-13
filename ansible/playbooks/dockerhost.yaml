@@ -6,7 +6,7 @@
       when: dockerhost_full is defined
     - role: nfs_server
       vars:
-        path: store/dockerhost
+        path: store/dockerhost/portainer
         sharenfs: "rw=@192.168.10.105"
         group:
           name: dockerhost
@@ -18,9 +18,10 @@
   roles:
     - basic_vm
     - tinyca_client
-    - role: nfs_client
-      vars:
-        src: 192.168.10.58:/mnt/store/dockerhost
-        dest: /mnt/data
     - docker
-    - portainer
+    - role: portainer
+      vars:
+        nfs_share_host: 192.168.10.58
+        nfs_share_path: /mnt/store/dockerhost/portainer
+        uid: 7000
+        gid: 7000
