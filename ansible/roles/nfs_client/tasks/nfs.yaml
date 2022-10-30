@@ -1,4 +1,12 @@
 ---
+- name: Ensure group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ group.name }}"
+    gid: "{{ group.gid }}"
+    state: present
+  when: group is defined
+
 - name: Stat the mount dir
   become: true
   ansible.builtin.stat:
@@ -18,6 +26,6 @@
   ansible.posix.mount:
     src: "{{ src }}"
     path: "{{ dest }}"
-    opts: rw,sync,hard,intr,tcp,nofail,noatime,nolock
+    opts: vers=4,rw,sync,hard,intr,tcp,nofail,noatime,nolock
     state: mounted
     fstype: nfs
