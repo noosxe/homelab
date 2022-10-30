@@ -1,0 +1,60 @@
+dockerhost.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  respond "Welcome to dockerhost!"
+}
+
+portainer.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  reverse_proxy https://portainer:9443 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+}
+
+vault.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  # This setting may have compatibility issues with some browsers
+  # (e.g., attachment downloading on Firefox). Try disabling this
+  # if you encounter issues.
+  encode gzip
+
+  # Notifications redirected to the websockets server
+  reverse_proxy /notifications/hub http://vault:3012
+
+  # Proxy everything else to Rocket
+  reverse_proxy http://vault:80 {
+    # Send the true remote IP to Rocket, so that vaultwarden can put this in the
+    # log, so that fail2ban can ban the correct IP.
+    header_up X-Real-IP {remote_host}
+  }
+}
+
+jellyfin.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  reverse_proxy http://jellyfin:8096
+}
