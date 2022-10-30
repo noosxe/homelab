@@ -1,42 +1,22 @@
 ---
-- name: Ensure group exists
+- name: Ensure groups exist
   become: true
   ansible.builtin.group:
-    name: "{{ group.name }}"
-    gid: "{{ group.gid }}"
+    name: "{{ item.group.name }}"
+    gid: "{{ item.group.gid }}"
     state: present
+  loop: "{{ shares }}"
 
-- name: Add share manager
+- name: Ensure users exist
   become: true
   ansible.builtin.user:
-    name: sharemanager
-    group: "{{ group.name }}"
+    name: "{{ item.user.name }}"
+    group: "{{ item.group.name }}"
     shell: /bin/bash
     create_home: false
     system: false
-    uid: 5000
-
-- name: Add share users
-  become: true
-  ansible.builtin.user:
-    name: "{{ item.name }}"
-    group: "{{ group.name }}"
-    shell: /bin/bash
-    create_home: false
-    system: false
-    uid: "{{ item.uid }}"
-  loop: "{{ users }}"
-
-- name: Create share directories
-  become: true
-  become_user: "{{ item.name }}"
-  ansible.builtin.file:
-    path: "{{ share_root }}/{{ item.name }}"
-    state: directory
-    mode: "0700"
-    owner: "{{ item.name }}"
-    group: "{{ group.name }}"
-  loop: "{{ users }}"
+    uid: "{{ item.user.uid }}"
+  loop: "{{ shares }}"
 
 - name: Install smb.conf
   become: true
@@ -45,27 +25,27 @@
     dest: /etc/samba/smb.conf
   notify: Restart smbd service
 
-- name: Install timemachine.service
+- name: Install samba.service
   become: true
   ansible.builtin.template:
-    src: timemachine.service.j2
-    dest: /etc/avahi/services/timemachine.service
+    src: samba.service.j2
+    dest: /etc/avahi/services/samba.service
   notify: Restart avahi-daemon service
 
-- name: Allow samba from mesh
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: "{{ smb_ports }}"
-    src: 192.168.150.0/24
+# - name: Allow samba from mesh
+#   become: true
+#   community.general.ufw:
+#     rule: allow
+#     port: "{{ smb_ports }}"
+#     src: 192.168.150.0/24
 
-- name: Allow avahi-daemon from mesh
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: 5353
-    proto: udp
-    src: 192.168.150.0/24
+# - name: Allow avahi-daemon from mesh
+#   become: true
+#   community.general.ufw:
+#     rule: allow
+#     port: 5353
+#     proto: udp
+#     src: 192.168.150.0/24
 
 - name: Allow samba locally
   become: true
