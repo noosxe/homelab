@@ -1,0 +1,6 @@
+---
+- name: Remove all but selected list of containers
+  become: true
+  community.docker.docker_network:
+    name: "{{ name }}"
+    connected: "{{ connected }}"
