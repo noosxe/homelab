@@ -1,0 +1,36 @@
+---
+- name: Install packages
+  ansible.builtin.import_tasks: pkgs.yaml
+
+- name: Ensure the group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ linux_group.name }}"
+    state: present
+    gid: "{{ linux_group.gid }}"
+
+- name: Ensure the user exists
+  become: true
+  ansible.builtin.user:
+    name: "{{ linux_user.name }}"
+    uid: "{{ linux_user.uid }}"
+    group: "{{ linux_group.name }}"
+
+- name: Ensure the jellyfin dir exists
+  become: true
+  become_user: "{{ linux_user.name }}"
+  ansible.builtin.file:
+    path: "{{ data_dir }}"
+    state: directory
+    mode: "0770"
+
+- name: Create the container
+  become: true
+  community.docker.docker_container:
+    name: jellyfin
+    image: linuxserver/jellyfin:10.8.5
+    restart_policy: always
+    recreate: true
+    volumes:
+      - "{{ data_dir }}:/config"
+      - "{{ media_dir }}:/data/media"
