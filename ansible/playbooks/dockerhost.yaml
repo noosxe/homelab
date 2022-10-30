@@ -6,11 +6,25 @@
       when: dockerhost_full is defined
     - role: nfs_server
       vars:
-        path: store/dockerhost/portainer
-        sharenfs: "rw=@192.168.10.105"
+        path: store/dockerhost
+        sharenfs: "rw=@192.168.10.105,anongid=7000,anonuid=7000,all_squash"
         group:
           name: dockerhost
           gid: 7000
+        user:
+          name: dockerhost
+          uid: 7000
+      when: dockerhost_full is defined
+    - role: nfs_server
+      vars:
+        path: store/media
+        sharenfs: "rw=@192.168.10.0/24,anongid=6000,anonuid=6000,all_squash"
+        group:
+          name: shares
+          gid: 6000
+        user:
+          name: shares
+          uid: 6000
       when: dockerhost_full is defined
 
 - name: Dockerhost
@@ -18,10 +32,67 @@
   roles:
     - basic_vm
     - tinyca_client
+    - role: nfs_client
+      vars:
+        group:
+          name: dockerhost
+          gid: 7000
+        src: 192.168.10.58:/mnt/store/dockerhost
+        dest: /mnt/dockerhost
+    - role: nfs_client
+      vars:
+        group:
+          name: shares
+          gid: 6000
+        src: 192.168.10.58:/mnt/store/media
+        dest: /mnt/media
     - docker
+    - role: caddy
+      vars:
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: caddy
+          uid: 10001
+          gid: 7000
+        data_dir: /mnt/dockerhost/caddy
     - role: portainer
       vars:
-        nfs_share_host: 192.168.10.58
-        nfs_share_path: /mnt/store/dockerhost/portainer
-        uid: 7000
-        gid: 7000
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: portainer
+          uid: 10002
+          gid: 7000
+        data_dir: /mnt/dockerhost/portainer
+    - role: vault
+      vars:
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: vault
+          uid: 10003
+          gid: 7000
+        data_dir: /mnt/dockerhost/vault
+    - role: jellyfin
+      vars:
+        linux_group:
+          name: shares
+          gid: 6000
+        linux_user:
+          name: jellyfin
+          uid: 10004
+          gid: 6000
+        data_dir: /mnt/dockerhost/jellyfin
+        media_dir: /mnt/media
+    - role: docker_network
+      vars:
+        name: dockerhost
+        connected:
+          - caddy
+          - portainer
+          - vault
+          - jellyfin
