@@ -4,7 +4,7 @@
   ansible.builtin.command: growpart /dev/sda 1
   ignore_errors: true
 
-- name: resize2fs
+- name: Resize2fs
   become: true
   ansible.builtin.command: resize2fs /dev/sda1
   ignore_errors: true
@@ -74,6 +74,12 @@
   become: true
   ansible.builtin.apt:
     name: nfs-common
+    state: present
+
+- name: Install ubuntu acl package
+  become: true
+  ansible.builtin.apt:
+    name: acl
     state: present
 
 - name: Allow OpenSSH
