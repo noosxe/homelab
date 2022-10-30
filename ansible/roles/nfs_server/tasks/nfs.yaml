@@ -7,6 +7,24 @@
     state: started
     enabled: true
 
+- name: Ensure group exists
+  become: true
+  become_method: su
+  ansible.builtin.group:
+    name: "{{ group.name }}"
+    gid: "{{ group.gid }}"
+    state: present
+
+- name: Ensure the user exists
+  become: true
+  become_method: su
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    group: "{{ group.name }}"
+    uid: "{{ user.uid }}"
+    create_home: false
+    shell: /use/bin/false
+
 - name: Configure zfs filesystem for {{ path }}
   become: true
   become_method: su
@@ -17,18 +35,11 @@
       compression: true
       sharenfs: "{{ sharenfs }}"
 
-- name: Ensure group exists
-  become: true
-  become_method: su
-  ansible.builtin.group:
-    name: "{{ group.name }}"
-    gid: "{{ group.gid }}"
-    state: present
-
 - name: Change the share directory group
   become: true
   become_method: su
   ansible.builtin.file:
     path: "/mnt/{{ path }}"
+    owner: "{{ user.name }}"
     group: "{{ group.name }}"
     mode: "0775"
