@@ -1,5 +1,9 @@
 # Homelab project
 
+This is my [P]ersonal [H]omelab [P]roject.
+
+If you're interested in ansible automation, then welcome!
+
 ## Services
 
 ### Dockerhost
