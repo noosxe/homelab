@@ -26,6 +26,6 @@
   ansible.posix.mount:
     src: "{{ src }}"
     path: "{{ dest }}"
-    opts: vers=4,rw,sync,hard,intr,tcp,nofail,noatime,nolock
+    opts: rw,async,hard,intr,tcp,nofail,noatime,nolock
     state: mounted
     fstype: nfs
