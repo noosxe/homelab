@@ -47,6 +47,7 @@
     src: Caddyfile.j2
     dest: "{{ data_dir }}/Caddyfile"
     mode: "0444"
+  register: caddyfile
 
 - name: Copy the root cert
   become: true
@@ -67,6 +68,7 @@
       - 80:80
       - 443:443
     restart_policy: always
+    recreate: "{{ caddyfile.changed }}"
     volumes:
       - "{{ data_dir }}/data:/data"
       - "{{ data_dir }}/config:/config"
