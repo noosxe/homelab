@@ -88,6 +88,16 @@
           gid: 6000
         data_dir: /mnt/dockerhost/jellyfin
         media_dir: /mnt/media
+    - role: uptime_kuma
+      vars:
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: uptime_kuma
+          uid: 7000
+          gid: 7000
+        data_dir: /mnt/dockerhost/uptime_kuma
     - role: docker_network
       vars:
         name: dockerhost
@@ -96,3 +106,4 @@
           - portainer
           - vault
           - jellyfin
+          - uptime-kuma

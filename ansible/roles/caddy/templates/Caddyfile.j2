@@ -58,3 +58,14 @@ jellyfin.local {
 
   reverse_proxy http://jellyfin:8096
 }
+
+uptime.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  reverse_proxy http://uptime-kuma:3001
+}
