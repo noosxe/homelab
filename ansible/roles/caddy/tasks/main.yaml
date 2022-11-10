@@ -74,3 +74,10 @@
       - "{{ data_dir }}/config:/config"
       - "{{ data_dir }}/Caddyfile:/etc/caddy/Caddyfile:ro"
       - /home/caddy/root_ca.crt:/root_ca.crt:ro
+
+- name: Allow https
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 443
+    proto: tcp
