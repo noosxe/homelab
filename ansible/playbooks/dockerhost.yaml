@@ -98,6 +98,16 @@
           uid: 7000
           gid: 7000
         data_dir: /mnt/dockerhost/uptime_kuma
+    - role: code-server
+      vars:
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: code_server
+          uid: 10005
+          gid: 7000
+        data_dir: /mnt/dockerhost/code-server
     - role: docker_network
       vars:
         name: dockerhost
@@ -107,3 +117,4 @@
           - vault
           - jellyfin
           - uptime-kuma
+          - code-server
