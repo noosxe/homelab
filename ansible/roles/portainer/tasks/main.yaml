@@ -28,10 +28,7 @@
   become: true
   community.docker.docker_container:
     name: portainer
-    image: portainer/portainer-ce:2.15.1-alpine
-    ports:
-      - 8000:8000
-      - 9443:9443
+    image: portainer/portainer-ce:2.16.1-alpine
     restart_policy: always
     volumes:
       - "{{ data_dir }}:/data"
