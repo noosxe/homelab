@@ -1,0 +1,15 @@
+---
+- name: Copy sonoff udev rules
+  become: true
+  ansible.builtin.template:
+    src: 76-sonoff.rules.j2
+    dest: /etc/udev/rules.d/76-sonoff.rules
+  notify: Reload udevadm
+
+- name: Trigger udevadm add action
+  become: true
+  ansible.builtin.command: udevadm trigger --action=add
+
+- name: Wait for /dev/sonoff
+  ansible.builtin.wait_for:
+    path: /dev/sonoff

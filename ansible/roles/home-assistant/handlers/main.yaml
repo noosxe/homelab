@@ -1,0 +1,4 @@
+---
+- name: Reload udevadm
+  become: true
+  ansible.builtin.command: udevadm control --reload-rules

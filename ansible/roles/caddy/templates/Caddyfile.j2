@@ -80,3 +80,14 @@ code.local {
 
   reverse_proxy http://code-server:8080
 }
+
+home-assistant.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  reverse_proxy http://192.168.10.105:8123
+}
