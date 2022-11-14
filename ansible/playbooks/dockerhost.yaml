@@ -118,6 +118,16 @@
           uid: 10006
           gid: 7000
         data_dir: /mnt/dockerhost/home-assistant
+    - role: prometheus
+      vars:
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: prometheus
+          uid: 10007
+          gid: 7000
+        data_dir: /mnt/dockerhost/prometheus
     - role: docker_network
       vars:
         name: dockerhost
@@ -128,3 +138,4 @@
           - jellyfin
           - uptime-kuma
           - code-server
+          - prometheus
