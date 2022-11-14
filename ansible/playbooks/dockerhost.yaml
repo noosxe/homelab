@@ -46,7 +46,9 @@
           gid: 6000
         src: 192.168.10.58:/mnt/store/media
         dest: /mnt/media
-    - docker
+    - role: docker
+      vars:
+        network_name: docker0
     - role: caddy
       vars:
         linux_group:
@@ -130,7 +132,7 @@
         data_dir: /mnt/dockerhost/prometheus
     - role: docker_network
       vars:
-        name: dockerhost
+        network_name: dockerhost
         connected:
           - caddy
           - portainer

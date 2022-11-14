@@ -2,5 +2,7 @@
 - name: Remove all but selected list of containers
   become: true
   community.docker.docker_network:
-    name: "{{ name }}"
+    name: "{{ network_name }}"
     connected: "{{ connected }}"
+    driver_options:
+      com.docker.network.bridge.name: "{{ network_name }}"

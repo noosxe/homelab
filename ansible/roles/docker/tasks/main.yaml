@@ -18,3 +18,20 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+
+- name: Template a file to /etc/file.conf
+  become: true
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify: Restart the docker service
+
+- name: Configure the firewall to allow metrics access
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 9323
+    proto: tcp
+    interface: "{{ network_name }}"
+    direction: in
