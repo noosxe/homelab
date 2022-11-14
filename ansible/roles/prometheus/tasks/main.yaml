@@ -49,3 +49,5 @@
     volumes:
       - "{{ data_dir }}/config:/etc/prometheus"
       - "{{ data_dir }}/data:/prometheus"
+    etc_hosts:
+      host.docker.internal: host-gateway
