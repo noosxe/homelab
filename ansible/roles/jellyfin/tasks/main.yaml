@@ -30,6 +30,16 @@
     name: jellyfin
     image: linuxserver/jellyfin:10.8.5
     restart_policy: always
+    network_mode: host
     volumes:
       - "{{ data_dir }}:/config"
       - "{{ media_dir }}:/data/media"
+
+- name: Configure the firewall to allow http access
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 8096
+    proto: tcp
+    interface: "{{ network_name }}"
+    direction: in
