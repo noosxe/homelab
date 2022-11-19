@@ -1,4 +1,4 @@
-# Homelab project
+# PHP - Personal Homelab project
 
 This is my [P]ersonal [H]omelab [P]roject.
 
