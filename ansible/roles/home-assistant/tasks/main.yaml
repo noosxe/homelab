@@ -42,9 +42,11 @@
     env:
       TZ: America/Los_Angeles
 
-- name: Allow home-assistant http
+- name: Configure the firewall to allow http access
   become: true
   community.general.ufw:
     rule: allow
     port: 8123
     proto: tcp
+    interface: "{{ network_name }}"
+    direction: in
