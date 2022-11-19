@@ -90,6 +90,7 @@
           gid: 6000
         data_dir: /mnt/dockerhost/jellyfin
         media_dir: /mnt/media
+        network_name: docker0
     - role: uptime_kuma
       vars:
         linux_group:
@@ -120,6 +121,7 @@
           uid: 10006
           gid: 7000
         data_dir: /mnt/dockerhost/home-assistant
+        network_name: docker0
     - role: prometheus
       vars:
         linux_group:
@@ -137,7 +139,6 @@
           - caddy
           - portainer
           - vault
-          - jellyfin
           - uptime-kuma
           - code-server
           - prometheus

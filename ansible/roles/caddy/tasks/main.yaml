@@ -74,6 +74,8 @@
       - "{{ data_dir }}/config:/config"
       - "{{ data_dir }}/Caddyfile:/etc/caddy/Caddyfile:ro"
       - /home/caddy/root_ca.crt:/root_ca.crt:ro
+    etc_hosts:
+      host.docker.internal: host-gateway
 
 - name: Allow https
   become: true

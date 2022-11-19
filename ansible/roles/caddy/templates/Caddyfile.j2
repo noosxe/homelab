@@ -56,7 +56,7 @@ jellyfin.local {
     }
   }
 
-  reverse_proxy http://jellyfin:8096
+  reverse_proxy http://host.docker.internal:8096
 }
 
 uptime.local {
@@ -89,7 +89,7 @@ home-assistant.local {
     }
   }
 
-  reverse_proxy http://192.168.10.105:8123
+  reverse_proxy http://host.docker.internal:8123
 }
 
 prometheus.local {
