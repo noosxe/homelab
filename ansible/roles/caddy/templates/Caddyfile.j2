@@ -102,3 +102,14 @@ prometheus.local {
 
   reverse_proxy http://prometheus:9090
 }
+
+torrent.local {
+  tls {
+    issuer acme https://tinyca.local/acme/acme/directory {
+      email           kirlevon@gmail.com
+      trusted_roots   /root_ca.crt
+    }
+  }
+
+  reverse_proxy http://qbittorrent:8080
+}

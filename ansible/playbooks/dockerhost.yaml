@@ -26,6 +26,17 @@
           name: shares
           uid: 6000
       when: dockerhost_full is defined
+    - role: nfs_server
+      vars:
+        path: store/downloads
+        sharenfs: "rw=@192.168.10.0/24,anongid=8000,anonuid=8000,all_squash"
+        group:
+          name: downloads
+          gid: 8000
+        user:
+          name: downloads
+          uid: 8000
+      when: dockerhost_full is defined
 
 - name: Dockerhost
   hosts: dockerhost
@@ -46,6 +57,13 @@
           gid: 6000
         src: 192.168.10.58:/mnt/store/media
         dest: /mnt/media
+    - role: nfs_client
+      vars:
+        group:
+          name: downloads
+          gid: 8000
+        src: 192.168.10.58:/mnt/store/downloads
+        dest: /mnt/downloads
     - role: docker
       vars:
         network_name: docker0
@@ -132,6 +150,17 @@
           uid: 10007
           gid: 7000
         data_dir: /mnt/dockerhost/prometheus
+    - role: qbittorrent
+      vars:
+        linux_group:
+          name: dockerhost
+          gid: 7000
+        linux_user:
+          name: qbittorrent
+          uid: 10008
+          gid: 7000
+        config_dir: /mnt/dockerhost/qbittorrent
+        downloads_dir: /mnt/downloads
     - role: docker_network
       vars:
         network_name: dockerhost
@@ -142,3 +171,4 @@
           - uptime-kuma
           - code-server
           - prometheus
+          - qbittorrent
